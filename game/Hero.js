@@ -10,6 +10,8 @@ var Hero = function(stage,assetManager){
     
     //add hero to the world
     var sprite = assetManager.getSprite("assets");
+    stage.addChild(sprite);
+    console.log(sprite);
     //Move method.... implement movement class like Sean's example?
     
     //---------- GET/SET
@@ -17,20 +19,22 @@ var Hero = function(stage,assetManager){
         return alive;
     }
     
+    
     this.getSprite = function(){
         return sprite;
     };
     
+    
     //-------- public methods
     this.init = function(){
         alive = true;
+        //stage.addChild(me);
     };
     
     this.kill = function(){
         if(alive){
             alive = false;
             sprite.gotoAndPlay("boofDeath");
-            
             sprite.addEventListener("animationend",onDeath);
         }
     }
