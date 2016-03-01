@@ -49,12 +49,13 @@
         stage.removeEventListener("onAllAssetsLoaded", onSetup);
 
         //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
-        var shape = new createjs.Shape();
-        shape.type = "ground";
-        shape.graphics.beginFill("#ff0000").drawRect(0, 0, 500, 100);
-        shape.y = 500;
-        shape.height = 100;
-        stage.addChild(shape);
+        var image = new Image();
+        image.src = "waffleSyrup.png";
+        var bitmap = new createjs.Bitmap(image);
+        bitmap.type ="ground";
+        bitmap.y = 500;
+        bitmap.x = 20;
+        stage.addChild(bitmap);
         // construct game objects
         //background = assetManager.getSprite("assets");
         //background.gotoAndStop("background");

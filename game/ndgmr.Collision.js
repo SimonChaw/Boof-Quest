@@ -47,6 +47,8 @@ this.ndgmr = this.ndgmr || {};
     var b1, b2;
     b1 = getBounds(bitmap1);
     b2 = getBounds(bitmap2);
+      console.log(b1);
+      console.log(b2);
     return calculateIntersection(b1,b2);
   }
   ndgmr.checkRectCollision = checkRectCollision;

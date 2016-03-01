@@ -13,12 +13,7 @@ var Hero = function(stage,assetManager,ground){
     var shape = new createjs.Shape();
     //add hero to the world
     var sprite = assetManager.getSprite("assets");
-    shape.graphics.beginFill("#0000ff").drawRect(sprite.x + 90, sprite.y + 160, 100, 20);
-    console.log(shape);
     stage.addChild(sprite);
-    stage.addChild(shape);
-    console.log(sprite);
-    console.log(ground);
     //Move method.... implement movement class like Sean's example?
     
     //---------- GET/SET
@@ -38,6 +33,7 @@ var Hero = function(stage,assetManager,ground){
     //-------- public methods
     this.init = function(){
         alive = true;
+        
         //stage.addChild(me);
     };
     
@@ -68,9 +64,9 @@ var Hero = function(stage,assetManager,ground){
             }
             //console.log(gravity * deltaTime);
             sprite.y += gravity * deltaTime;
+        }else{
+            
         }
-        shape.x = sprite.x;
-        shape.y = sprite.y;
     }
     
     this.kill = function(){
@@ -90,8 +86,11 @@ var Hero = function(stage,assetManager,ground){
     }
     
     function checkIfGrounded(){
-        if(shape.y > ground[0].y - ground[0].height){
+        var intersection = ndgmr.checkRectCollision(sprite,ground[0]);
+        if(intersection !== null){
             touchingDown = true;
+        }else{
+            touchingDown = false;
         }
     }
 }

@@ -1,0 +1,80 @@
+{ "height":10,
+ "layers":[
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 3, 3, 0, 0, 3, 3, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+         "height":10,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":29,
+         "x":0,
+         "y":0
+        }],
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
+ "renderorder":"right-down",
+ "tileheight":80,
+ "tilesets":[
+        {
+         "columns":1,
+         "firstgid":1,
+         "image":"waffleSyrup.png",
+         "imageheight":80,
+         "imagewidth":80,
+         "margin":0,
+         "name":"waffleSyrup",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":80,
+         "tilewidth":80,
+         "transparentcolor":"#ffffff"
+        }, 
+        {
+         "columns":1,
+         "firstgid":2,
+         "image":"waffle.png",
+         "imageheight":80,
+         "imagewidth":80,
+         "margin":0,
+         "name":"waffle",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":80,
+         "tilewidth":80,
+         "transparentcolor":"#ffffff"
+        }, 
+        {
+         "columns":1,
+         "firstgid":3,
+         "image":"forkNknife.png",
+         "imageheight":80,
+         "imagewidth":80,
+         "margin":0,
+         "name":"forkNknife",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":80,
+         "tilewidth":80,
+         "transparentcolor":"#ffffff"
+        }],
+ "tilewidth":80,
+ "version":1,
+ "width":29
+}
