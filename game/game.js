@@ -31,7 +31,7 @@
         // get reference to canvas
         canvas = document.getElementById("stage");
         // set canvas to as wide/high as the browser window
-        canvas.width = 600;
+        canvas.width = 800;
         canvas.height = 600;
         // create stage object
         stage = new createjs.Stage(canvas);
@@ -51,8 +51,9 @@
         //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
         var shape = new createjs.Shape();
         shape.type = "ground";
-        shape.graphics.beginFill("#ff0000").drawRect(0, 500, 500, 100);
-        
+        shape.graphics.beginFill("#ff0000").drawRect(0, 0, 500, 100);
+        shape.y = 500;
+        shape.height = 100;
         stage.addChild(shape);
         // construct game objects
         //background = assetManager.getSprite("assets");

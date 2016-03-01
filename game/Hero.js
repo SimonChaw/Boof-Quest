@@ -8,15 +8,17 @@ var Hero = function(stage,assetManager,ground){
     var gravity = 0.5;
     
     //custom event oground[i]jects
+    collisionMethod = ndgmr.checkRectCollision;
     var eventOnDeath = new createjs.Event("onDeath",true);
     var shape = new createjs.Shape();
-    shape.type = "ground";
     //add hero to the world
     var sprite = assetManager.getSprite("assets");
-    shape.graphics.beginFill("").drawRect(sprite.x + 90, sprite.y + 160, 100, 20);
+    shape.graphics.beginFill("#0000ff").drawRect(sprite.x + 90, sprite.y + 160, 100, 20);
+    console.log(shape);
     stage.addChild(sprite);
     stage.addChild(shape);
     console.log(sprite);
+    console.log(ground);
     //Move method.... implement movement class like Sean's example?
     
     //---------- GET/SET
@@ -58,7 +60,7 @@ var Hero = function(stage,assetManager,ground){
     
     this.update = function(deltaTime){
         checkIfGrounded();
-        console.log(touchingDown);
+        //console.log(touchingDown);
         if(!touchingDown){
             if(sprite.currentAnimation !== "boofAir"){
                 sprite.gotoAndPlay("boofAir");
@@ -88,16 +90,8 @@ var Hero = function(stage,assetManager,ground){
     }
     
     function checkIfGrounded(){
-         if (
-        (shape.y == (ground[0].y)) ||
-        (shape.y > (ground[0].y + ground[0].height)) ||
-        ((shape.x + shape.width) < ground[0].x) ||
-        (shape.x > (ground[0].x + ground[0].width))
-    ){
-             touchingDown = true;
-         }else{
-             touchingDown = false;
-         }
-        console.log("Statement 1:"+ (shape.y) + " " + ground[0].y);
+        if(shape.y > ground[0].y - ground[0].height){
+            touchingDown = true;
+        }
     }
 }
