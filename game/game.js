@@ -6,7 +6,7 @@
 (function() {
 
     window.addEventListener("load", onInit);
-
+    //http://jsfiddle.net/gfcarv/QKgHs/
     // game variables
     var stage = null;
     var canvas = null;
@@ -35,7 +35,7 @@
         canvas.height = 600;
         // create stage object
         stage = new createjs.Stage(canvas);
-
+        loadMap(stage);
         // construct preloader object to load spritesheet and sound assets
         assetManager = new AssetManager(stage);
         stage.addEventListener("onAllAssetsLoaded", onSetup);
@@ -49,13 +49,6 @@
         stage.removeEventListener("onAllAssetsLoaded", onSetup);
 
         //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
-        var image = new Image();
-        image.src = "waffleSyrup.png";
-        var bitmap = new createjs.Bitmap(image);
-        bitmap.type ="ground";
-        bitmap.y = 500;
-        bitmap.x = 20;
-        stage.addChild(bitmap);
         // construct game objects
         //background = assetManager.getSprite("assets");
         //background.gotoAndStop("background");
@@ -138,7 +131,7 @@
             Boof.sprite.gotoAndPlay("boofWalk");
         }else if (e.keyCode == 38 && !upKey){
             upKey = true;
-            Boof.sprite.gotoAndPlay("boofJump");
+            Boof.sprite.gotoAndPlay("boofWalk");
         }
         else if (e.keyCode == 40){
             downKey = true;
@@ -150,12 +143,15 @@
     }
 
     function onKeyUp(e) {
+        
         // which keystroke is up?
-        if (e.keyCode == 37) leftKey = false;
+        if (e.keyCode == 37) leftKey = false; 
         else if (e.keyCode == 39) rightKey = false;
         else if (e.keyCode == 38) upKey = false;
         else if (e.keyCode == 40) downKey = false;
         else if (e.keyCode == 16) shiftKey = false;
+        
+        if(e.keyCode ==37 || e.keyCode == 39){Boof.sprite.gotoAndStop("boofWalk");}
     }
 
     function onTick(e) {

@@ -1,10 +1,7 @@
-(function(){
-    "use strict";
-    
-    
+
     function loadMap(stage){
         var xmlhttp = new XMLHttpRequest();
-        var url = "test.json";
+        var url = "mapTest/test.json";
 
 
         xmlhttp.onreadystatechange = function() {
@@ -19,38 +16,27 @@
         function myFunction(arr) {
             var height = arr.height;
             var width = arr.width;
-            var tiles = new Array();
-            
-            
-            for(i = 0; i < arr.tilesets.length; i++) {
-                
-            }
             var counter = 0;
             var y=0;
             var color;
-
-            for(i =0; i < map.data.length;i++){
-
-                output.innerHTML += map.data[i] + ",";
-                color = ((map.data[i] !== 0)?"red":"blue");
-                if(counter === map.width){
+            //console.log(arr);
+            for(i =0; i < arr.layers[0].data.length;i++){
+                var currentData = arr.layers[0].data[i];
+                if(counter === width){
                     counter = 0;
-                    y +=10;
-                    output.innerHTML += "<br />";
+                    y +=80;
                 }
-                var square = new createjs.Shape();
-                square.graphics.beginFill(color).drawRect((counter * 10),y,10,10);
-                stage.addChild(square);
+                var image = new Image();
+                if(currentData != 0){   
+                    image.src = "mapTest/" + arr.tilesets[currentData - 1].image;
+                    var bitmap = new createjs.Bitmap(image);
+                    bitmap.type ="ground";
+                    bitmap.y = y;
+                    bitmap.x = counter * 80;
+                    //console.log(bitmap);
+                    stage.addChild(bitmap);
+                }
                 counter ++;
             }
-
-
-            stage.update();
-        }
-
-        function drawToCanvas(img){
-            stage.addChild(img);
         }
     }
-    
-}());
