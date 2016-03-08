@@ -1,11 +1,14 @@
 var Hero = function(stage,assetManager,ground){
     //init
     var touchingDown = false;
+    var isJumping = false;
     var alive = true;
     //keep track of scope
     var me = this;
     var speed = 10;
     var gravity = 0.5;
+    var maxJumpForce = 5;
+    var curJumpForce;
     
     //custom event oground[i]jects
     collisionMethod = ndgmr.checkRectCollision;
@@ -18,11 +21,14 @@ var Hero = function(stage,assetManager,ground){
     var image = new Image();
     image.src = "assets/hitbox.png";
     var hitbox = new createjs.Bitmap(image);
-    hitbox.x = sprite.x + 90;
-    hitbox.y = sprite.y + 150;
     hitbox.scaleX = 0.4;
     hitbox.scaleY = 0.3;
     hitbox.visible = false;
+    var bodyBox = new createjs.Bitmap(image);
+    bodyBox.scaleX = 0.55;
+    bodyBox.scaleY = 1.2;
+    bodyBox.visible = false;
+    stage.addChild(bodyBox);
     stage.addChild(hitbox);
     
     //Move method.... implement movement class like Sean's example?
@@ -56,6 +62,14 @@ var Hero = function(stage,assetManager,ground){
         sprite.x -= speed;
     }
     
+    this.startJump = function(){
+        if(touchingDown){
+            sprite.gotoAndPlay("boofJumpStart");
+            sprite.addEventListener("animationend",jump);
+        }
+    }
+    
+    
     this.run = function(){
         speed = 15;
     }
@@ -69,6 +83,15 @@ var Hero = function(stage,assetManager,ground){
         console.log(sprite.currentAnimation);
         checkIfGrounded();
         //console.log(touchingDown);
+        if(isJumping){
+            sprite.y -= Math.pow(curJumpForce, 2);
+            curJumpForce -= 1.2;
+            console.log(curJumpForce);
+            if(curJumpForce <= 0){
+                isJumping = false;
+            }
+        }
+        
         if(!touchingDown){
             playIfNotPlaying("boofAir");
             //console.log(gravity * deltaTime);
@@ -78,6 +101,8 @@ var Hero = function(stage,assetManager,ground){
         }
         hitbox.x = sprite.x + 90;
         hitbox.y = sprite.y + 150;
+        bodyBox.x = sprite.x + 70;
+        bodyBox.y = sprite.y + 25;
     }
     
     this.kill = function(){
@@ -97,14 +122,28 @@ var Hero = function(stage,assetManager,ground){
         sprite.dispatchEvent(eventHeroKilled);
     }
     
+    function jump(e){
+        sprite.stop();
+        e.remove();
+        curJumpForce = 11;
+        isJumping = true;
+    }
+    
     function checkIfGrounded(){
         for(var i = 0;i<ground.length;i++){
-        var intersection = ndgmr.checkRectCollision(hitbox,ground[i]);
+            var intersection = ndgmr.checkRectCollision(hitbox,ground[i]);
             if(intersection !== null){
                 touchingDown = true;
+                //playIfNotPlaying("boofLand");
                 break;
             }else{
                 touchingDown = false;
+            }
+            var intersection = ndgmr.checkRectCollision(bodyBox,ground[i]);
+            if(intersection !== null){
+                if(ground[i].x > sprite.x){
+                    sprite.x = sprite.x - speed;
+                }
             }
         }
     }

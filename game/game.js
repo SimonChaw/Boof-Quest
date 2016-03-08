@@ -19,7 +19,8 @@
     var frameRate = 26;
     var Boof;
     var ground = Array();
-    
+    var canWalkRight;
+    var canWalkLeft;
     var lastUpdate;
     var myInterval;
     // game objects
@@ -121,7 +122,7 @@
         // which keystroke is down?
         if (e.keyCode == 37 && !leftKey){
             leftKey = true;
-            Boof.sprite.regX = 300;
+            Boof.sprite.regX = 280;
             Boof.sprite.scaleX = -1;
             Boof.sprite.gotoAndPlay("boofWalk");
         }else if(e.keyCode == 39 && !rightKey){
@@ -131,7 +132,7 @@
             Boof.sprite.gotoAndPlay("boofWalk");
         }else if (e.keyCode == 38 && !upKey){
             upKey = true;
-            Boof.sprite.gotoAndPlay("boofWalk");
+            Boof.startJump();
         }
         else if (e.keyCode == 40){
             downKey = true;
