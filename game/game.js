@@ -9,6 +9,7 @@
     //http://jsfiddle.net/gfcarv/QKgHs/
     // game variables
     var stage = null;
+    var container = null;
     var canvas = null;
     var downKey = false;
     var upKey = false;
@@ -36,7 +37,9 @@
         canvas.height = 600;
         // create stage object
         stage = new createjs.Stage(canvas);
-        loadMap(stage);
+        container = new createjs.Container();
+        stage.addChild(container);
+        loadMap(container);
         // construct preloader object to load spritesheet and sound assets
         assetManager = new AssetManager(stage);
         stage.addEventListener("onAllAssetsLoaded", onSetup);
@@ -74,12 +77,12 @@
         createjs.Ticker.setFPS(frameRate);
         createjs.Ticker.addEventListener("tick", onTick);
         lastUpdate = Date.now();
-        for(var i = 0;i <  stage.children.length; i ++){
-            if(stage.children[i].type == "ground"){
-                ground.push(stage.children[i]);
+        for(var i = 0;i <  container.children.length; i ++){
+            if(container.children[i].type == "ground"){
+                ground.push(container.children[i]);
             }
         }
-        Boof = new Hero(stage, assetManager,ground);
+        Boof = new Hero(container, assetManager,ground);
         Boof.sprite = Boof.getSprite();
         //myInterval = setInterval(onTick,0);
         onStartGame();

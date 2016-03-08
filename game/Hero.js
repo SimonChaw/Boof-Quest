@@ -80,7 +80,9 @@ var Hero = function(stage,assetManager,ground){
     
     
     this.update = function(deltaTime){
-        console.log(sprite.currentAnimation);
+        stage.x = (sprite.x) * -1;
+        if(touchingDown && !isJumping)
+            stage.y = (sprite.y - 200) * -1;
         checkIfGrounded();
         //console.log(touchingDown);
         if(isJumping){
@@ -141,8 +143,11 @@ var Hero = function(stage,assetManager,ground){
             }
             var intersection = ndgmr.checkRectCollision(bodyBox,ground[i]);
             if(intersection !== null){
-                if(ground[i].x > sprite.x){
-                    sprite.x = sprite.x - speed;
+                if(ground[i].x > bodyBox.x){
+                    sprite.x -= speed;
+                }else if(ground[i].x < bodyBox.x){
+                    console.log("ground: " + ground[i].x + " player x: " + sprite.x);
+                    sprite.x += speed;
                 }
             }
         }
