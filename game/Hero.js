@@ -10,23 +10,24 @@ var Hero = function(stage,assetManager,ground){
     var maxJumpForce = 5;
     var curJumpForce;
     
-    //custom event oground[i]jects
-    collisionMethod = ndgmr.checkRectCollision;
     var eventOnDeath = new createjs.Event("onDeath",true);
     //add hero to the world
     var sprite = assetManager.getSprite("assets");
     sprite.x = 0;
     sprite.y = 0;
+    sprite.type = "boof";
     stage.addChild(sprite);
     var image = new Image();
     image.src = "assets/hitbox.png";
     var hitbox = new createjs.Bitmap(image);
     hitbox.scaleX = 0.4;
     hitbox.scaleY = 0.3;
+    hitbox.type = "feet";
     hitbox.visible = false;
     var bodyBox = new createjs.Bitmap(image);
     bodyBox.scaleX = 0.55;
     bodyBox.scaleY = 1.2;
+    bodyBox.type = "body";
     bodyBox.visible = false;
     stage.addChild(bodyBox);
     stage.addChild(hitbox);
