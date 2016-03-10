@@ -9,6 +9,7 @@ var Hero = function(stage,assetManager,ground){
     var gravity = 0.5;
     var maxJumpForce = 5;
     var curJumpForce;
+    var health;
     
     //custom event oground[i]jects
     collisionMethod = ndgmr.checkRectCollision;
@@ -18,10 +19,16 @@ var Hero = function(stage,assetManager,ground){
     sprite.x = 0;
     sprite.y = 0;
     stage.addChild(sprite);
+    var heart = assetManager.getSprite("assets");
+    heart.x = 600;
+    heart.y = 10;
+    heart.scaleX = 0.6;
+    heart.scaleY = 0.6;
+    stage.addChild(heart);
     var image = new Image();
     image.src = "assets/hitbox.png";
     var hitbox = new createjs.Bitmap(image);
-    hitbox.scaleX = 0.4;
+    hitbox.scaleX = 0.3;
     hitbox.scaleY = 0.3;
     hitbox.visible = false;
     var bodyBox = new createjs.Bitmap(image);
@@ -50,7 +57,8 @@ var Hero = function(stage,assetManager,ground){
     //-------- public methods
     this.init = function(){
         alive = true;
-        
+        health = 4;
+        me.updateHealth();
         //stage.addChild(me);
     };
     
@@ -80,10 +88,9 @@ var Hero = function(stage,assetManager,ground){
     
     
     this.update = function(deltaTime){
-        stage.x = (sprite.x) * -1;
-        if(touchingDown && !isJumping)
-            stage.y = (sprite.y - 200) * -1;
+        followMe();//make the 'camer
         checkIfGrounded();
+        me.updateHealth();
         //console.log(touchingDown);
         if(isJumping){
             sprite.y -= Math.pow(curJumpForce, 2);
@@ -95,13 +102,13 @@ var Hero = function(stage,assetManager,ground){
         }
         
         if(!touchingDown){
-            playIfNotPlaying("boofAir");
+            playIfNotPlaying("boofAir",sprite);
             //console.log(gravity * deltaTime);
             sprite.y += gravity * deltaTime;
         }else{
-            stopIfPlaying("boofAir");
+            stopIfPlaying("boofAir",sprite);
         }
-        hitbox.x = sprite.x + 90;
+        hitbox.x = sprite.x + 100;
         hitbox.y = sprite.y + 150;
         bodyBox.x = sprite.x + 70;
         bodyBox.y = sprite.y + 25;
@@ -113,6 +120,21 @@ var Hero = function(stage,assetManager,ground){
             sprite.gotoAndPlay("boofDeath");
             sprite.addEventListener("animationend",onDeath);
         }
+    }
+    
+    this.updateHealth = function(){
+        var animName = "health" + health;
+        playIfNotPlaying(animName,heart);
+    }
+    
+    function followMe(){
+        if(alive){
+            stage.x = (sprite.x) * -1;
+            if(touchingDown && !isJumping){
+                var playerPoint = (sprite.y - 200) * -1;
+                stage.y = playerPoint;
+            }
+        }   
     }
     
     //--------------event handlers
@@ -136,7 +158,7 @@ var Hero = function(stage,assetManager,ground){
             var intersection = ndgmr.checkRectCollision(hitbox,ground[i]);
             if(intersection !== null){
                 touchingDown = true;
-                //playIfNotPlaying("boofLand");
+                //playIfNotPlaying("boofWalk");
                 break;
             }else{
                 touchingDown = false;
@@ -149,17 +171,18 @@ var Hero = function(stage,assetManager,ground){
                     console.log("ground: " + ground[i].x + " player x: " + sprite.x);
                     sprite.x += speed;
                 }
+                health --;
             }
         }
     }
     
-    function playIfNotPlaying(animationName){
+    function playIfNotPlaying(animationName, sprite){
         if(sprite.currentAnimation !== animationName){
             sprite.gotoAndPlay(animationName);
         }
     }
     
-    function stopIfPlaying(animationName){
+    function stopIfPlaying(animationName, sprite){
         if(sprite.currentAnimation == animationName){
             sprite.stop();
         }
