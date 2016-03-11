@@ -123,19 +123,12 @@
 
     function onKeyDown(e) {
         // which keystroke is down?
-        if (e.keyCode == 37 && !leftKey){
+        if (e.keyCode == 37){
             leftKey = true;
-            Boof.sprite.regX = 280;
-            Boof.sprite.scaleX = -1;
-            Boof.sprite.gotoAndPlay("boofWalk");
-        }else if(e.keyCode == 39 && !rightKey){
+        }else if(e.keyCode == 39){
             rightKey = true;
-            Boof.sprite.regX = 0;
-            Boof.sprite.scaleX = 1;
-            Boof.sprite.gotoAndPlay("boofWalk");
-        }else if (e.keyCode == 38 && !upKey){
+        }else if (e.keyCode == 38){
             upKey = true;
-            Boof.startJump();
         }
         else if (e.keyCode == 40){
             downKey = true;
@@ -174,23 +167,10 @@
             }else{
                 Boof.walk();
             }
-            
-            
-            if (leftKey) {
-                Boof.walkLeft();
-            } else if (rightKey) {
-                Boof.walkRight();
-            } else if (upKey) {
-                //console.log("jumping");
-            } else if (downKey) {
-                
-                //console.log("croutching I guess");
-            } else {
-                //console.log("here");
-            }
+            Boof.update(deltaTime);
+            Boof.getController().update(upKey,rightKey,leftKey);
         }
         
-        Boof.update(deltaTime);
         // update the stage!
         stage.update();
     }

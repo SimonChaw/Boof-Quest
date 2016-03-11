@@ -8,8 +8,9 @@ var Hero = function(stage,assetManager,ground){
     var speed = 10;
     var gravity = 0.5;
     var maxJumpForce = 5;
-    var curJumpForce;
-    
+    var currentJumpForce = 0;
+    var maxHeight;
+    var controller;
     var eventOnDeath = new createjs.Event("onDeath",true);
     //add hero to the world
     var sprite = assetManager.getSprite("assets");
@@ -39,6 +40,13 @@ var Hero = function(stage,assetManager,ground){
         return alive;
     }
     
+    this.getController = function(){
+        return controller;
+    }
+    
+    this.isTouchingDown = function(){
+        return touchingDown;
+    }
     
     this.getSprite = function(){
         return sprite;
@@ -50,17 +58,23 @@ var Hero = function(stage,assetManager,ground){
     
     //-------- public methods
     this.init = function(){
+        maxHeight = false;
         alive = true;
-        
+        controller = new Controller(me);
+        controller.init();
         //stage.addChild(me);
     };
     
-    this.walkRight = function(){
-        sprite.x += speed;
+    this.walkLeft = function(){
+        sprite.regX = 280;
+        sprite.scaleX = -1;
+        sprite.x -= speed;
     }
     
-    this.walkLeft = function(){
-        sprite.x -= speed;
+    this.walkRight = function(){
+        sprite.regX = 0;
+        sprite.scaleX = 1;
+        sprite.x += speed;
     }
     
     this.startJump = function(){
@@ -68,6 +82,19 @@ var Hero = function(stage,assetManager,ground){
             sprite.gotoAndPlay("boofJumpStart");
             sprite.addEventListener("animationend",jump);
         }
+    }
+    
+    this.jump = function(jumping){
+        if(jumping && currentJumpForce !== maxJumpForce){
+            currentJumpForce += 0.2;
+            if(currentJumpForce === maxJumpForce){
+                maxHeight = true;
+            }
+        }else if(!jumping || maxHeight){
+            currentJumpForce -=0.2;
+        }
+        sprite.y = Math.pow(currentJumpForce,2);
+        return !touchingDown;
     }
     
     
@@ -82,10 +109,13 @@ var Hero = function(stage,assetManager,ground){
     
     this.update = function(deltaTime){
         stage.x = (sprite.x) * -1;
-        if(touchingDown && !isJumping)
+        if(touchingDown)
             stage.y = (sprite.y - 200) * -1;
         checkIfGrounded();
-        //console.log(touchingDown);
+        if(!touchingDown){
+            sprite.y += gravity * deltaTime;
+        }
+        /*console.log(touchingDown);
         if(isJumping){
             sprite.y -= Math.pow(curJumpForce, 2);
             curJumpForce -= 1.2;
@@ -102,6 +132,7 @@ var Hero = function(stage,assetManager,ground){
         }else{
             stopIfPlaying("boofAir");
         }
+        */
         hitbox.x = sprite.x + 90;
         hitbox.y = sprite.y + 150;
         bodyBox.x = sprite.x + 70;
@@ -137,6 +168,7 @@ var Hero = function(stage,assetManager,ground){
             var intersection = ndgmr.checkRectCollision(hitbox,ground[i]);
             if(intersection !== null){
                 touchingDown = true;
+                maxHeight = false;
                 //playIfNotPlaying("boofLand");
                 break;
             }else{
