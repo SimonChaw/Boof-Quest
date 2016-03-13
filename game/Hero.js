@@ -86,15 +86,16 @@ var Hero = function(stage,assetManager,ground){
     
     this.jump = function(jumping){
         if(jumping && currentJumpForce !== maxJumpForce){
-            currentJumpForce += 0.2;
+            currentJumpForce += 1;
             if(currentJumpForce === maxJumpForce){
                 maxHeight = true;
             }
         }else if(!jumping || maxHeight){
-            currentJumpForce -=0.2;
+            currentJumpForce -=1;
         }
-        sprite.y = Math.pow(currentJumpForce,2);
-        return !touchingDown;
+        console.log(currentJumpForce);
+        sprite.y -= Math.pow(currentJumpForce,2);
+        return touchingDown;
     }
     
     
@@ -155,13 +156,7 @@ var Hero = function(stage,assetManager,ground){
         e.remove();
         sprite.dispatchEvent(eventHeroKilled);
     }
-    
-    function jump(e){
-        sprite.stop();
-        e.remove();
-        curJumpForce = 11;
-        isJumping = true;
-    }
+  
     
     function checkIfGrounded(){
         for(var i = 0;i<ground.length;i++){
