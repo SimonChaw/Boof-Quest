@@ -16,6 +16,9 @@
     var leftKey = false;
     var rightKey = false;
     var shiftKey = false;
+    
+    var levels = ["level1","level2","level3","level4"];
+    var level;
     // frame rate of game
     var frameRate = 26;
     var Boof;
@@ -29,7 +32,7 @@
     // ------------------------------------------------------------ event handlers
     function onInit() {
         console.log(">> initializing");
-
+        level = 0;
         // get reference to canvas
         canvas = document.getElementById("stage");
         // set canvas to as wide/high as the browser window
@@ -39,12 +42,12 @@
         stage = new createjs.Stage(canvas);
         container = new createjs.Container();
         stage.addChild(container);
-        loadMap(container);
         // construct preloader object to load spritesheet and sound assets
         assetManager = new AssetManager(stage);
         stage.addEventListener("onAllAssetsLoaded", onSetup);
         // load the assets
         assetManager.loadAssets(manifest);
+        loadMap(container, assetManager);
     }
 
     function onSetup() {
@@ -77,19 +80,16 @@
         createjs.Ticker.setFPS(frameRate);
         createjs.Ticker.addEventListener("tick", onTick);
         lastUpdate = Date.now();
-        for(var i = 0;i <  container.children.length; i ++){
-            if(container.children[i].type == "ground"){
-                ground.push(container.children[i]);
-            }
-        }
-        Boof = new Hero(container, assetManager,ground);
+        Boof = new Hero(container, assetManager,stage);
         Boof.sprite = Boof.getSprite();
         //myInterval = setInterval(onTick,0);
         onStartGame();
     }
 
     function onStartGame(e) {
-        
+        //zoom camera
+        container.scaleX = 0.7;
+        container.scaleY = 0.7;
         // start the snake object
         Boof.init();
         
@@ -110,8 +110,7 @@
     
     function onGameOver(e) {
         // gameOver
-
-
+        
         // remove all listeners
         document.removeEventListener("keydown", onKeyDown);
         document.removeEventListener("keyup", onKeyUp);
@@ -127,8 +126,9 @@
             leftKey = true;
         }else if(e.keyCode == 39){
             rightKey = true;
-        }else if (e.keyCode == 38){
+        }else if (e.keyCode == 38 && !upKey){
             upKey = true;
+            Boof.getController().startJump();
         }
         else if (e.keyCode == 40){
             downKey = true;
@@ -144,13 +144,29 @@
         // which keystroke is up?
         if (e.keyCode == 37) leftKey = false; 
         else if (e.keyCode == 39) rightKey = false;
-        else if (e.keyCode == 38) upKey = false;
+        else if (e.keyCode == 38){ upKey = false; Boof.getController().endJump();}
         else if (e.keyCode == 40) downKey = false;
         else if (e.keyCode == 16) shiftKey = false;
         
         if(e.keyCode ==37 || e.keyCode == 39){Boof.sprite.gotoAndStop("boofWalk");}
     }
 
+    function loadNextLevel(){
+        if(!level + 1 > levels.length){
+            level ++;
+            while(container.scaleX != 3){//maybe this will make a nice animation??
+                container.scaleX += 0.1;
+                container.scaleY += 0.1;
+                stage.update();
+            }
+            stage.removeAllChildren();//dump out previous loaded stage.
+            loadMap(container,assetManager);//load next level
+            Boof.init();
+        }else{
+            //game finished
+        }
+    }
+    
     function onTick(e) {
         // TESTING FPS
         document.getElementById("fps").innerHTML = createjs.Ticker.getMeasuredFPS();
@@ -167,10 +183,15 @@
             }else{
                 Boof.walk();
             }
-            Boof.update(deltaTime);
             Boof.getController().update(upKey,rightKey,leftKey);
+        }else{
+            onGameOver();
         }
+        Boof.update(deltaTime);
         
+        if(Boof.levelCompleted()){
+            loadNextLevel();
+        }
         // update the stage!
         stage.update();
     }

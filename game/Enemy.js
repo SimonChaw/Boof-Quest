@@ -14,38 +14,28 @@ var Enemy = function(stage,type,x,y,assetManager){
     
     this.init = function(){
         alive = true;
+        sprite = assetManager.getSprite("assets");
         image.src = "assets/hitbox.png";
         bodybox = new createjs.Bitmap(image);
-        for(var i = 0;i <  stage.children.length; i ++){
-            if(stage.children[i].type == "ground"){
-                ground.push(container.children[i]);
-            }else if(stage.children[i].type == "feet"){
-                hero.feet = stage.children[i];
-            }else if(stage.children[i].type == "body"){
-                hero.body = stage.children[i];
-            }
-            else if(stage.children[i].type == "boof"){
-                hero.sprite = stage.children[i];
-            }
-        }
-        sprite = assetManager.getSprite("assets");
         if(type === "mouldy"){
             walkTimer = 60;
             sprite.gotoAndPlay("mouldyWalk");
             speed = 2;
         }
+        sprite.x = x;
+        sprite.y = y;
+        stage.addChild(sprite);
         stage.addChild(bodybox);
+        
     }
     
     this.update = function(){
         bodybox.x = sprite.x;
         bodybox.y = sprite.y;
         if(!isGrounded()){
-            sprite.y -= gravity;   
+            //sprite.y += gravity;   
         }
         decide();
-        
-        
     }
     
     this.walkRight = function(){
@@ -60,9 +50,9 @@ var Enemy = function(stage,type,x,y,assetManager){
         sprite.x -= speed;
     }
     
-    this.kill(){
+    this.kill = function(){
         alive = false;
-        if(type=="mouldy"){
+        if(type==="mouldy"){
             sprite.gotoAndPlay("mouldyDeath");
             sprite.addEventListener();
         }
@@ -90,21 +80,19 @@ var Enemy = function(stage,type,x,y,assetManager){
         }
     }
     
-    function checkCollision(){
-        var intersection = ndgmr.checkRectCollision(hero.feet, sprite);
-        if(intersection !== null){
-               
-        }
-    }
+    
     
     function isGrounded(){
-        for(var i = 0;i<ground.length;i++){
-            var intersection = ndgmr.checkRectCollision(hitbox,ground[i]);
-            if(intersection !== null){
-                return true;
-            }else{
-                return false;
+        for(var i = 0;i<stage.children.length;i++){
+            if(stage.children[i].type === "ground"){
+                var intersection = ndgmr.checkRectCollision(hitbox,stage.children[i]);
+                if(intersection !== null){
+                    return true;
+                }else{
+                    return false;
+                }
             }
     }
     
+}
 }
