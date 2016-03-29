@@ -152,16 +152,18 @@
     }
 
     function loadNextLevel(){
-        if(!level + 1 > levels.length){
-            level ++;
-            while(container.scaleX != 3){//maybe this will make a nice animation??
-                container.scaleX += 0.1;
-                container.scaleY += 0.1;
+    if((level + 1) < levels.length){
+            if(container.scaleX != 1.2){//maybe this will make a nice animation??
+                container.scaleX += 0.01;
+                container.scaleY += 0.01;
                 stage.update();
+            }else{
+                stage.removeAllChildren();//dump out previous loaded stage.
+                loadMap(container,assetManager);//load next level
+                Boof.init();//reset hero
+                container.scaleX = 0.7;//Reset camera zoom
+                container.scaleY = 0.7;
             }
-            stage.removeAllChildren();//dump out previous loaded stage.
-            loadMap(container,assetManager);//load next level
-            Boof.init();
         }else{
             //game finished
         }
@@ -190,6 +192,7 @@
         Boof.update(deltaTime);
         
         if(Boof.levelCompleted()){
+            
             loadNextLevel();
         }
         // update the stage!

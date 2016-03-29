@@ -1,4 +1,6 @@
 var Hero = function(stage,assetManager,hud){
+    //BOOF: CURRENT INFO - JUMP HEIGHT: 2 TILES. JUMP SPAN: 3 TILES
+    
     //init
     var touchingDown = false;
     var isJumping = false;
@@ -15,26 +17,18 @@ var Hero = function(stage,assetManager,hud){
     var hitpoints;
     var maxHeight;
     var controller;
+    var levelComplete;
     var invisibilityTimer = 0; 
     var eventOnDeath = new createjs.Event("onDeath",true);
     //add hero to the world
     var sprite = assetManager.getSprite("assets");
-    sprite.x = 0;
-    sprite.y = 0;
-    sprite.type = "boof";
-    stage.addChild(sprite);
+    
     var image = new Image();
     image.src = "assets/hitbox.png";
     var hitbox = new createjs.Bitmap(image);
-    hitbox.scaleX = 0.4;
-    hitbox.scaleY = 0.3;
-    hitbox.visible = false;
+    
     var bodyBox = new createjs.Bitmap(image);
-    bodyBox.scaleX = 0.55;
-    bodyBox.scaleY = 1.2;
-    bodyBox.visible = false;
-    stage.addChild(bodyBox);
-    stage.addChild(hitbox);
+    
     
     //Move method.... implement movement class like Sean's example?
     
@@ -59,8 +53,28 @@ var Hero = function(stage,assetManager,hud){
         return speed;
     }
     
+    this.levelCompleted = function(){
+        return levelComplete;
+    }
+    
     //-------- public methods
     this.init = function(){
+        //BOOF
+        sprite.x = 0;
+        sprite.y = 0;
+        sprite.type = "boof";
+        //FEET
+        hitbox.scaleX = 0.4;
+        hitbox.scaleY = 0.3;
+        hitbox.visible = false;
+        //BODY
+        bodyBox.scaleX = 0.55;
+        bodyBox.scaleY = 1.2;
+        bodyBox.visible = false;
+        
+        stage.addChild(bodyBox);
+        stage.addChild(hitbox);
+        stage.addChild(sprite);
         maxHeight = false;
         alive = true;
         controller = new Controller(me);
@@ -73,7 +87,7 @@ var Hero = function(stage,assetManager,hud){
         hud.addChild(healthHud);
         hitpoints = 4;
         healthHud.gotoAndPlay("health4");
-        
+        levelComplete = false;
     };
     
     this.walkLeft = function(){
@@ -130,6 +144,8 @@ var Hero = function(stage,assetManager,hud){
             hitbox.y = sprite.y + 160;
             bodyBox.x = sprite.x + 70;
             bodyBox.y = sprite.y + 25;
+        }else{
+            sprite.visible = true;
         }
         if(!touchingDown || !alive){
                 sprite.y += gravity * deltaTime;
@@ -153,12 +169,16 @@ var Hero = function(stage,assetManager,hud){
     }
     
     function updateHealth(){
-        if(hitpoints > 0){
+        if(hitpoints > 1){
             var currentAnim = "health" + hitpoints; 
             if(healthHud.currentAnimation !== currentAnim){
                 healthHud.gotoAndPlay(currentAnim);
             }
         }else{
+            var currentAnim = "health" + hitpoints; 
+            if(healthHud.currentAnimation !== currentAnim){
+                healthHud.gotoAndPlay(currentAnim);
+            }
             me.kill();
         }
     }
@@ -173,6 +193,13 @@ var Hero = function(stage,assetManager,hud){
                     if(stage.children[i].type === "sharp" || stage.children[i].type === "hazard"){
                         me.takeDamage();
                     }
+                    //check if enemy was stomped
+                    if(stage.children[i].type === "enemy"){
+                        stage.children[i].kill();
+                    }
+                    if(stage.children[i].type === "key"){//check if the player has reached the key
+                        levelComplete = true;
+                    }
                     break;
                 }else{
                     touchingDown = false;
@@ -184,20 +211,15 @@ var Hero = function(stage,assetManager,hud){
                     }else if(stage.children[i].x < bodyBox.x){
                         sprite.x += speed;
                     }
+                    //check if the player has run into an enemy
+                    if(stage.children[i].type === "enemy"){
+                        me.takeDamage();
+                    }
+                    if(stage.children[i].type === "key"){//check if the player has reached the key
+                        levelComplete = true;
+                    }
                 }
             }
-        }
-    }
-    
-    function playIfNotPlaying(animationName){
-        if(sprite.currentAnimation !== animationName){
-            sprite.gotoAndPlay(animationName);
-        }
-    }
-    
-    function stopIfPlaying(animationName){
-        if(sprite.currentAnimation == animationName){
-            sprite.stop();
         }
     }
 }

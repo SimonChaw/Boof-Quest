@@ -27,34 +27,46 @@
                     y +=80;
                 }
                 var image = new Image();
-                if(currentData > 0 && currentData < 3){   
+                if(currentData > 0){   
                     image.src = "mapTest/" + arr.tilesets[currentData - 1].image;
-                    var bitmap = new createjs.Bitmap(image);
-                    bitmap.type ="ground";
-                    bitmap.y = y;
-                    bitmap.x = counter * 80;
-                    //console.log(bitmap);
-                    stage.addChild(bitmap);
-                }else if(currentData == 3){
-                    image.src = "mapTest/" + arr.tilesets[currentData - 1].image;
-                    var bitmap = new createjs.Bitmap(image);
-                    bitmap.type ="hazard";
-                    bitmap.y = y;
-                    bitmap.x = counter * 80;
-                    //console.log(bitmap);
-                    stage.addChild(bitmap);
-                    createHazard(bitmap);
+                    if(arr.tilesets[currentData - 1].image !== "forkNknife.png"){
+                        var bitmap = new createjs.Bitmap(image);
+                        bitmap.type ="ground";
+                        bitmap.y = y;
+                        bitmap.x = counter * 80;
+                        //console.log(bitmap);
+                        stage.addChild(bitmap);
+                    }else{
+                       image.src = "mapTest/" + arr.tilesets[currentData - 1].image;
+                        var bitmap = new createjs.Bitmap(image);
+                        bitmap.type ="hazard";
+                        bitmap.y = y;
+                        bitmap.x = counter * 80;
+                        //console.log(bitmap);
+                        stage.addChild(bitmap);
+                        createHazard(bitmap); 
+                    }
                 }
                 
-                if(currentData == 4){
+                if(currentData == "M"){
                     var enemy = new Enemy(stage,"mouldy",(counter * 80),y, assetManager);
                     enemy.init();
+                }
+                
+                if(currentData == "K"){
+                    image.src = "mapTest/key.png";
+                    var bitmap = new createjs.Bitmap(image);
+                    bitmap.type ="key";
+                    bitmap.y = y;
+                    bitmap.x = counter * 80;
+                    stage.addChild(bitmap);
                 }
                 counter ++;
             }
         }
         
         function createHazard(bitmap){
+            console.log("creating hazard");
             var image = new Image();
             image.src = "assets/hitbox.png";
             var hitbox = new createjs.Bitmap(image);
