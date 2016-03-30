@@ -3,7 +3,7 @@
         var xmlhttp = new XMLHttpRequest();
         var url = "mapTest/level1.json";
         console.log(assetManager.getSprite("assets"));
-
+        var mapLoaded = new createjs.Event("mapLoaded");
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var myArr = JSON.parse(xmlhttp.responseText);
@@ -50,7 +50,8 @@
                 
                 if(currentData == "M"){
                     var enemy = new Enemy(stage,"mouldy",(counter * 80),y, assetManager);
-                    enemy.init();
+                    //enemy.init();
+                    Enemies.push(enemy);
                 }
                 
                 if(currentData == "K"){
@@ -63,8 +64,7 @@
                 }
                 counter ++;
             }
-            console.log("Map loaded");
-            return true;
+            stage.dispatchEvent(mapLoaded);
         }
         
         function createHazard(bitmap){

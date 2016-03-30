@@ -74,23 +74,24 @@
         //userInterface = new UserInterface(stage, assetManager, snakeMaxSpeed);
         //userInterface.setupMe();	
         
-        
-        // startup the ticker
-        createjs.Ticker.setFPS(frameRate);
-        createjs.Ticker.addEventListener("tick", onTick);
         lastUpdate = Date.now();
         Boof = new Hero(container, assetManager,stage);
         Boof.sprite = Boof.getSprite();
         //myInterval = setInterval(onTick,0);
-        onStartGame();
+        container.addEventListener("mapLoaded",onStartGame);
     }
 
     function onStartGame(e) {
+        container.removeEventListener("mapLoaded",onStartGame);
+        for(var i = 0; i < Enemies.length; i ++){
+            Enemies[i].init();
+        }
+        Boof.init();
         //zoom camera
         container.scaleX = 0.7;
         container.scaleY = 0.7;
         // start the snake object
-        Boof.init();
+        
         console.log("Boof Initilized");
         // current state of keys
         leftKey = false;
@@ -191,6 +192,9 @@
             onGameOver();
         }
         
+        for(var i = 0; i < Enemies.length; i ++){
+            Enemies[i].update();
+        }
         if(Boof.levelCompleted()){
             
             loadNextLevel();

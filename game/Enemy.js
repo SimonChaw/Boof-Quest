@@ -1,5 +1,6 @@
 var Enemy = function(stage,type,x,y,assetManager){
     //properties
+    var me = this;
     var sprite;
     var alive;
     var walkTimer;
@@ -9,19 +10,17 @@ var Enemy = function(stage,type,x,y,assetManager){
     var ground;
     var hero = new Object();
     var image = new Image();
-    var bodybox;
     var gravity = 19;
     
     this.init = function(){
         alive = true;
         sprite = assetManager.getSprite("assets");
         sprite.type = "enemy";
-        image.src = "assets/hitbox.png";
-        bodybox = new createjs.Bitmap(image);
         if(type === "mouldy"){
-            walkTimer = 60;
+            walkTimer = 100;
             sprite.gotoAndPlay("mouldyWalk");
-            speed = 2;
+            speed = 4;
+            walkingLeft = true;
         }
         sprite.x = x;
         sprite.y = y;
@@ -33,13 +32,10 @@ var Enemy = function(stage,type,x,y,assetManager){
             sprite.addEventListener("animationend",onDeath);
         }
         stage.addChild(sprite);
-        stage.addChild(bodybox);
         
     }
     
     this.update = function(){
-        bodybox.x = sprite.x;
-        bodybox.y = sprite.y;
         if(!isGrounded()){
             //sprite.y += gravity;   
         }
@@ -63,7 +59,7 @@ var Enemy = function(stage,type,x,y,assetManager){
     function decide(){
         if(type==="mouldy"){
             if(walkingLeft){
-                this.walkLeft();
+                me.walkLeft();
                 walkTimer --;
                 if(walkTimer == 0){
                     walkingLeft = false;
@@ -71,7 +67,7 @@ var Enemy = function(stage,type,x,y,assetManager){
                     walkTimer = 60;
                 }
             }else if(walkingRight){
-                this.walkRight();
+                me.walkRight();
                 walkTimer --;
                 if(walkTimer == 0){
                     walkingLeft = true;
@@ -91,7 +87,7 @@ var Enemy = function(stage,type,x,y,assetManager){
     function isGrounded(){
         for(var i = 0;i<stage.children.length;i++){
             if(stage.children[i].type === "ground"){
-                var intersection = ndgmr.checkRectCollision(hitbox,stage.children[i]);
+                var intersection = ndgmr.checkRectCollision(sprite,stage.children[i]);
                 if(intersection !== null){
                     return true;
                 }else{

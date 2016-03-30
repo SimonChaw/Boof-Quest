@@ -7,6 +7,8 @@ var Hero = function(stage,assetManager,hud){
     var alive = true;
     var hitpoints;
     var healthHud;
+    var velX;
+    var velY;
     //keep track of scope
     var me = this;
     var speed = 10;
