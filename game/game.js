@@ -1,7 +1,3 @@
-// Munch implemented in HTML5
-// Sean Morrow
-// May 12, 2014
-
 "use strict";
 (function() {
 
@@ -16,9 +12,11 @@
     var leftKey = false;
     var rightKey = false;
     var shiftKey = false;
-    
+    var mapLoaded;
     var levels = ["level1","level2","level3","level4"];
     var level;
+    //holder for enemies
+    var Enemies = Array();
     // frame rate of game
     var frameRate = 26;
     var Boof;
@@ -33,6 +31,7 @@
     function onInit() {
         console.log(">> initializing");
         level = 0;
+        mapLoaded = false;
         // get reference to canvas
         canvas = document.getElementById("stage");
         // set canvas to as wide/high as the browser window
@@ -47,14 +46,14 @@
         stage.addEventListener("onAllAssetsLoaded", onSetup);
         // load the assets
         assetManager.loadAssets(manifest);
-        loadMap(container, assetManager);
+        
     }
 
     function onSetup() {
         console.log(">> setup");
         // kill event listener
         stage.removeEventListener("onAllAssetsLoaded", onSetup);
-
+        loadMap(container, assetManager,Enemies);
         //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
         // construct game objects
         //background = assetManager.getSprite("assets");
@@ -92,7 +91,7 @@
         container.scaleY = 0.7;
         // start the snake object
         Boof.init();
-        
+        console.log("Boof Initilized");
         // current state of keys
         leftKey = false;
         rightKey = false;
@@ -153,16 +152,17 @@
 
     function loadNextLevel(){
     if((level + 1) < levels.length){
-            if(container.scaleX != 1.2){//maybe this will make a nice animation??
+            if(container.scaleX < 1.2){//maybe this will make a nice animation??
                 container.scaleX += 0.01;
                 container.scaleY += 0.01;
-                stage.update();
             }else{
                 stage.removeAllChildren();//dump out previous loaded stage.
+                container.removeAllChildren();
                 loadMap(container,assetManager);//load next level
-                Boof.init();//reset hero
                 container.scaleX = 0.7;//Reset camera zoom
                 container.scaleY = 0.7;
+                Boof.init();//reset hero
+                stage.addChild(container);
             }
         }else{
             //game finished
@@ -186,10 +186,10 @@
                 Boof.walk();
             }
             Boof.getController().update(upKey,rightKey,leftKey);
+            Boof.update(deltaTime);
         }else{
             onGameOver();
         }
-        Boof.update(deltaTime);
         
         if(Boof.levelCompleted()){
             

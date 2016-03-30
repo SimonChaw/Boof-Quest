@@ -15,6 +15,7 @@ var Enemy = function(stage,type,x,y,assetManager){
     this.init = function(){
         alive = true;
         sprite = assetManager.getSprite("assets");
+        sprite.type = "enemy";
         image.src = "assets/hitbox.png";
         bodybox = new createjs.Bitmap(image);
         if(type === "mouldy"){
@@ -24,6 +25,13 @@ var Enemy = function(stage,type,x,y,assetManager){
         }
         sprite.x = x;
         sprite.y = y;
+        sprite.kill = function(){
+            alive = false;
+            if(type==="mouldy"){
+                sprite.gotoAndPlay("mouldyDeath");
+            }
+            sprite.addEventListener("animationend",onDeath);
+        }
         stage.addChild(sprite);
         stage.addChild(bodybox);
         
@@ -50,13 +58,7 @@ var Enemy = function(stage,type,x,y,assetManager){
         sprite.x -= speed;
     }
     
-    this.kill = function(){
-        alive = false;
-        if(type==="mouldy"){
-            sprite.gotoAndPlay("mouldyDeath");
-            sprite.addEventListener();
-        }
-    }
+    
     
     function decide(){
         if(type==="mouldy"){
@@ -80,7 +82,11 @@ var Enemy = function(stage,type,x,y,assetManager){
         }
     }
     
-    
+    function onDeath(e){
+        sprite.stop();
+        e.remove();
+        stage.removeChild(sprite);
+    }
     
     function isGrounded(){
         for(var i = 0;i<stage.children.length;i++){

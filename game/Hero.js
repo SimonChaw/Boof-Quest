@@ -199,6 +199,7 @@ var Hero = function(stage,assetManager,hud){
                     }
                     if(stage.children[i].type === "key"){//check if the player has reached the key
                         levelComplete = true;
+                        stage.removeChild(stage.children[i]);
                     }
                     break;
                 }else{
@@ -217,6 +218,7 @@ var Hero = function(stage,assetManager,hud){
                     }
                     if(stage.children[i].type === "key"){//check if the player has reached the key
                         levelComplete = true;
+                        stage.removeChild(stage.children[i]);
                     }
                 }
             }

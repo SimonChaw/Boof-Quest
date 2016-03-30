@@ -1,5 +1,5 @@
 
-    function loadMap(stage, assetManager){
+    function loadMap(stage, assetManager,Enemies){
         var xmlhttp = new XMLHttpRequest();
         var url = "mapTest/level1.json";
         console.log(assetManager.getSprite("assets"));
@@ -63,6 +63,8 @@
                 }
                 counter ++;
             }
+            console.log("Map loaded");
+            return true;
         }
         
         function createHazard(bitmap){
