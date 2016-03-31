@@ -53,7 +53,7 @@
         console.log(">> setup");
         // kill event listener
         stage.removeEventListener("onAllAssetsLoaded", onSetup);
-        loadMap(container, assetManager,Enemies);
+        loadMap(container, assetManager,Enemies, "mapTest/" + levels[level] + ".json");
         //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
         // construct game objects
         //background = assetManager.getSprite("assets");
@@ -79,6 +79,7 @@
         Boof.sprite = Boof.getSprite();
         //myInterval = setInterval(onTick,0);
         container.addEventListener("mapLoaded",onStartGame);
+        console.log("mapTest/" + levels[level] + ".json");
     }
 
     function onStartGame(e) {
@@ -157,13 +158,9 @@
                 container.scaleX += 0.01;
                 container.scaleY += 0.01;
             }else{
-                stage.removeAllChildren();//dump out previous loaded stage.
-                container.removeAllChildren();
-                loadMap(container,assetManager);//load next level
-                container.scaleX = 0.7;//Reset camera zoom
-                container.scaleY = 0.7;
-                Boof.init();//reset hero
-                stage.addChild(container);
+                level ++;
+                container.removeAllChildren(); //dumpstage
+                onSetup();
             }
         }else{
             //game finished

@@ -1,7 +1,6 @@
 
-    function loadMap(stage, assetManager,Enemies){
+    function loadMap(stage, assetManager,Enemies, url){
         var xmlhttp = new XMLHttpRequest();
-        var url = "mapTest/level1.json";
         console.log(assetManager.getSprite("assets"));
         var mapLoaded = new createjs.Event("mapLoaded");
         xmlhttp.onreadystatechange = function() {

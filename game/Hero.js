@@ -7,8 +7,6 @@ var Hero = function(stage,assetManager,hud){
     var alive = true;
     var hitpoints;
     var healthHud;
-    var velX;
-    var velY;
     //keep track of scope
     var me = this;
     var speed = 10;
@@ -90,18 +88,19 @@ var Hero = function(stage,assetManager,hud){
         hitpoints = 4;
         healthHud.gotoAndPlay("health4");
         levelComplete = false;
+        sprite.velX = 0;
     };
     
     this.walkLeft = function(){
         sprite.regX = 280;
         sprite.scaleX = -1;
-        sprite.x -= speed;
+        sprite.velX = speed * -1;
     }
     
     this.walkRight = function(){
         sprite.regX = 0;
         sprite.scaleX = 1;
-        sprite.x += speed;
+        sprite.velX = speed;
     }
     
     this.jump = function(velocity){
@@ -146,6 +145,12 @@ var Hero = function(stage,assetManager,hud){
             hitbox.y = sprite.y + 160;
             bodyBox.x = sprite.x + 70;
             bodyBox.y = sprite.y + 25;
+            sprite.x += sprite.velX;
+            if(sprite.velX < 0){
+                sprite.velX ++;
+            }else if(sprite.velX > 0){
+                sprite.velX --;
+            }
         }else{
             sprite.visible = true;
         }
@@ -197,6 +202,7 @@ var Hero = function(stage,assetManager,hud){
                     }
                     //check if enemy was stomped
                     if(stage.children[i].type === "enemy"){
+                        controller.startJump();
                         stage.children[i].kill();
                     }
                     if(stage.children[i].type === "key"){//check if the player has reached the key
@@ -216,6 +222,7 @@ var Hero = function(stage,assetManager,hud){
                     }
                     //check if the player has run into an enemy
                     if(stage.children[i].type === "enemy"){
+                        
                         me.takeDamage();
                     }
                     if(stage.children[i].type === "key"){//check if the player has reached the key

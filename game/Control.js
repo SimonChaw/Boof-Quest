@@ -32,11 +32,8 @@ var Controller = function(player){
     }
     
     this.endJump = function(e){
-        jumping = false;
+        //jumping = false;
         console.log("Jump ended!");
-        if(velocity < -6){
-            velocity = 0;
-        }
     }
     
     
