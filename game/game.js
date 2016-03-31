@@ -43,16 +43,38 @@
         stage.addChild(container);
         // construct preloader object to load spritesheet and sound assets
         assetManager = new AssetManager(stage);
-        stage.addEventListener("onAllAssetsLoaded", onSetup);
+        stage.addEventListener("onAllAssetsLoaded", titleScreen);
         // load the assets
         assetManager.loadAssets(manifest);
         
+    }
+    
+    function titleScreen(){
+        console.log("Title Screen");
+        var button = new createjs.Shape();
+        button.graphics.beginFill("red").drawRect(0,0,400,100);
+        button.x = 200;
+        button.y = 200;
+        
+        var text = new createjs.Text();
+        text.set({
+            text:'Start Game',
+        });
+        text.x = 280;
+        text.y = 240;
+        text.scaleX = 5;
+        text.scaleY = 5;
+        button.on("click",function(){stage.removeChild(button,text);
+                                    onSetup();});
+        stage.addChild(button,null,text);
+        stage.update();
     }
 
     function onSetup() {
         console.log(">> setup");
         // kill event listener
         stage.removeEventListener("onAllAssetsLoaded", onSetup);
+        
         loadMap(container, assetManager,Enemies, "mapTest/" + levels[level] + ".json");
         //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
         // construct game objects
@@ -111,10 +133,28 @@
     
     function onGameOver(e) {
         // gameOver
+        stage.removeAllChildren();
+        console.log("Game Over");
+        var button = new createjs.Shape();
+        button.graphics.beginFill("red").drawRect(0,0,400,100);
+        button.x = 200;
+        button.y = 200;
         
+        var text = new createjs.Text();
+        text.set({
+            text:'You Died - Restart',
+        });
+        text.x = 220;
+        text.y = 240;
+        text.scaleX = 4.5;
+        text.scaleY = 4.5;
+        button.on("click",function(){stage.removeChild(button,text);
+                                    onSetup();});
+        stage.addChild(button,null,text);
+        stage.update();
         // remove all listeners
-        document.removeEventListener("keydown", onKeyDown);
-        document.removeEventListener("keyup", onKeyUp);
+        //document.removeEventListener("keydown", onKeyDown);
+        //document.removeEventListener("keyup", onKeyUp);
     }
 
     function onResetGame(e) {
