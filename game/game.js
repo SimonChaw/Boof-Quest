@@ -133,6 +133,7 @@
     }
     
     function onGameOver(e) {
+        createjs.Sound.stop("bgmusic");
         // gameOver
         stage.removeAllChildren();
         console.log("Game Over");
