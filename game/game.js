@@ -71,6 +71,7 @@
     }
 
     function onSetup() {
+        createjs.Sound.play("bgmusic");
         console.log(">> setup");
         // kill event listener
         stage.removeEventListener("onAllAssetsLoaded", onSetup);
