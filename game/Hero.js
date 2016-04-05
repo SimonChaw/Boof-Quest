@@ -75,7 +75,7 @@ var Hero = function(stage,assetManager,hud){
         //FEET
         hitbox.scaleX = 0.4;
         hitbox.scaleY = 0.3;
-        hitbox.visible = false;
+        //hitbox.visible = false;
         //BODY
         bodyBox.scaleX = 0.55;
         bodyBox.scaleY = 1.2;
@@ -114,7 +114,7 @@ var Hero = function(stage,assetManager,hud){
     
     this.jump = function(velocity){
         sprite.y += velocity;
-        velocity += 0.8;
+        velocity += 1;
         console.log(velocity);
         return velocity;
     }
@@ -148,7 +148,7 @@ var Hero = function(stage,assetManager,hud){
             stage.y = (sprite.y/1.5) * -1 + 200;
             checkIfGrounded();
             hitbox.x = sprite.x + 90;
-            hitbox.y = sprite.y + 160;
+            hitbox.y = sprite.y + 140;
             bodyBox.x = sprite.x + 70;
             bodyBox.y = sprite.y + 25;
             sprite.x += sprite.velX;
@@ -201,6 +201,12 @@ var Hero = function(stage,assetManager,hud){
             if(stage.children[i].type !== "boof" && stage.children[i].type !== undefined){
                 var intersection = ndgmr.checkRectCollision(hitbox,stage.children[i]);
                 if(intersection !== null){
+                    do{
+                        sprite.y --;
+                        hitbox.y --;
+                    }while(ndgmr.checkRectCollision(hitbox,stage.children[i]) !== null);
+                    sprite.y ++;
+                    hitbox.y ++;
                     touchingDown = true;
                     console.log(stage.children[i].type);
                     if(stage.children[i].type === "sharp" || stage.children[i].type === "hazard"){
