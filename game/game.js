@@ -199,6 +199,8 @@
             if(container.scaleX < 1.2){//maybe this will make a nice animation??
                 container.scaleX += 0.01;
                 container.scaleY += 0.01;
+                container.x = container.x * 1.3;
+                container.y = container.y * 1.8;          
             }else{
                 level ++;
                 container.removeAllChildren(); //dumpstage
