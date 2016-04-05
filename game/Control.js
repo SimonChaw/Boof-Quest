@@ -13,7 +13,6 @@ var Controller = function(player){
         maxHeight = false;
         maxJumpForce = 10;
         currentJumpForce = 0;
-        startingJump = false;
         player.sprite = player.getSprite();
         console.log(player.sprite);
     }
@@ -25,7 +24,7 @@ var Controller = function(player){
     
     this.startJump = function(e){
         if(player.isTouchingDown()){
-            jumping = true;
+            player.setJumping(true);
             console.log("Jump started!");
             velocity = -20;
         }
@@ -50,7 +49,7 @@ var Controller = function(player){
     this.update = function(upKey,rightKey,leftKey){
         if(player.isAlive()){
             if(upKey){
-                if(!jumping){startJump = true;}
+                if(!player.isJumping()){startJump = true;}
                 currentState = states[1]; 
             }else if(player.isTouchingDown() && (leftKey || rightKey)){
                 currentState = states[0];
@@ -58,11 +57,12 @@ var Controller = function(player){
                 currentState = states[2];
             }
 
-            if(jumping){
+            if(player.isJumping()){
                 velocity = player.jump(velocity);
-                if(velocity === 0){
-                    jumping = false;
-                }
+                if(velocity > 0)
+                    if(player.isTouchingDown())
+                        player.setJumping(false);
+                    
             }
 
             if(rightKey){

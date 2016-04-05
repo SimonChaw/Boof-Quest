@@ -19,6 +19,7 @@ var Hero = function(stage,assetManager,hud){
     var controller;
     var levelComplete;
     var invisibilityTimer = 0; 
+    var jumping;
     var eventOnDeath = new createjs.Event("onDeath",true);
     //add hero to the world
     var sprite = assetManager.getSprite("assets");
@@ -55,6 +56,14 @@ var Hero = function(stage,assetManager,hud){
     
     this.levelCompleted = function(){
         return levelComplete;
+    }
+    
+    this.isJumping = function(){
+        return jumping;
+    }
+    
+    this.setJumping = function(jump){
+        jumping = jump;
     }
     
     //-------- public methods
@@ -104,11 +113,8 @@ var Hero = function(stage,assetManager,hud){
     }
     
     this.jump = function(velocity){
-        sprite.y += velocity ;
-        velocity -= 10;
-        if(velocity < -98){
-            velocity = 0;
-        }
+        sprite.y += velocity;
+        velocity += 0.8;
         console.log(velocity);
         return velocity;
     }
@@ -154,7 +160,7 @@ var Hero = function(stage,assetManager,hud){
         }else{
             sprite.visible = true;
         }
-        if(!touchingDown || !alive){
+        if((!touchingDown || !alive) &&  !jumping){
                 sprite.y += gravity * deltaTime;
             }
     }
@@ -216,9 +222,11 @@ var Hero = function(stage,assetManager,hud){
                 var intersection = ndgmr.checkRectCollision(bodyBox,stage.children[i]);
                 if(intersection !== null){
                     if(stage.children[i].x > bodyBox.x){
-                        sprite.x -= speed;
+                        if(sprite.velX > 0)
+                            sprite.velX = 0;
                     }else if(stage.children[i].x < bodyBox.x){
-                        sprite.x += speed;
+                        if(sprite.velX < 0)
+                            sprite.velX = 0;
                     }
                     //check if the player has run into an enemy
                     if(stage.children[i].type === "enemy"){
