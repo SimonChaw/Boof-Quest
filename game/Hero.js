@@ -73,7 +73,7 @@ var Hero = function(stage,assetManager,hud){
         sprite.y = 0;
         sprite.type = "boof";
         //FEET
-        hitbox.scaleX = 0.4;
+        hitbox.scaleX = 0.3;
         hitbox.scaleY = 0.3;
         //hitbox.visible = false;
         //BODY
@@ -130,6 +130,7 @@ var Hero = function(stage,assetManager,hud){
     
     this.takeDamage = function(colObj){
         if(invisibilityTimer <= 0){
+            createjs.Sound.play("crunch");
             hitpoints --; 
             invisibilityTimer = 50;
         }

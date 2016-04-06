@@ -1,18 +1,12 @@
 var Controller = function(player){
     var states = ["walking","jumping","still"];
     var currentState;
-    var maxJumpForce;
-    var jumping;
-    var startJump;
-    var currentJumpForce;
     var maxHeight;
     var velocity;
     
     this.init = function(){
         currentState = "";
         maxHeight = false;
-        maxJumpForce = 10;
-        currentJumpForce = 0;
         player.sprite = player.getSprite();
         console.log(player.sprite);
     }
@@ -24,6 +18,7 @@ var Controller = function(player){
     
     this.startJump = function(e){
         if(player.isTouchingDown()){
+            createjs.Sound.play("jump");
             player.setJumping(true);
             console.log("Jump started!");
             velocity = -20;

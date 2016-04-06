@@ -11,5 +11,20 @@ var manifest = [
         src:"assets/overworld.ogg",
         id:"bgmusic",
         data:4
+    },
+    {
+        src:"sounds/jump.ogg",
+        id:"jump",
+        data:1
+    },
+    {
+        src:"sounds/munch.ogg",
+        id:"crunch",
+        data:2
+    },
+    {
+        src:"sounds/death.ogg",
+        id:"death",
+        data:3
     }
 ];

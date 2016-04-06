@@ -203,7 +203,10 @@
                 container.y = container.y * 1.8;          
             }else{
                 level ++;
+                createjs.Sound.stop("bgmusic");
+                stage.removeAllChildren();
                 container.removeAllChildren(); //dumpstage
+                stage.addChild(container);
                 onSetup();
             }
         }else{

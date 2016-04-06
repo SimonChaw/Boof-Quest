@@ -57,28 +57,31 @@ var Enemy = function(stage,type,x,y,assetManager){
     
     
     function decide(){
-        if(type==="mouldy"){
-            if(walkingLeft){
-                me.walkLeft();
-                walkTimer --;
-                if(walkTimer == 0){
-                    walkingLeft = false;
-                    walkingRight = true;
-                    walkTimer = 60;
-                }
-            }else if(walkingRight){
-                me.walkRight();
-                walkTimer --;
-                if(walkTimer == 0){
-                    walkingLeft = true;
-                    walkingRight = false;
-                    walkTimer = 60;
+        if(alive){
+            if(type==="mouldy"){
+                if(walkingLeft){
+                    me.walkLeft();
+                    walkTimer --;
+                    if(walkTimer == 0){
+                        walkingLeft = false;
+                        walkingRight = true;
+                        walkTimer = 60;
+                    }
+                }else if(walkingRight){
+                    me.walkRight();
+                    walkTimer --;
+                    if(walkTimer == 0){
+                        walkingLeft = true;
+                        walkingRight = false;
+                        walkTimer = 60;
+                    }
                 }
             }
         }
     }
     
     function onDeath(e){
+        createjs.Sound.play("death");
         sprite.stop();
         e.remove();
         stage.removeChild(sprite);
