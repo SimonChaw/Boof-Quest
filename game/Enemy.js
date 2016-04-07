@@ -4,6 +4,7 @@ var Enemy = function(stage,type,x,y,assetManager){
     var sprite;
     var alive;
     var walkTimer;
+    var shotTimer;
     var walkingLeft;
     var walkingRight;
     var speed;
@@ -21,6 +22,9 @@ var Enemy = function(stage,type,x,y,assetManager){
             sprite.gotoAndPlay("mouldyWalk");
             speed = 4;
             walkingLeft = true;
+        }else if(type === "yogi"){
+            shotTimer = 200;
+            sprite.gotoAndPlay("yogiIdle");
         }
         sprite.x = x;
         sprite.y = y;
@@ -76,6 +80,13 @@ var Enemy = function(stage,type,x,y,assetManager){
                         walkTimer = 60;
                     }
                 }
+            }else if(type === "yogi"){
+                if(shotTimer > 0){
+                    shotTimer --;
+                }else{
+                    shotTimer = 200;
+                    shootProjectile();
+                }
             }
         }
     }
@@ -98,6 +109,68 @@ var Enemy = function(stage,type,x,y,assetManager){
                 }
             }
     }
+     
+    function shootProjectile(){
+        
+    }
     
 }
+}
+
+var Projectile = function(assetManager,x,y,stage){
+    var sprite;
+    var lifeDuration;
+    var me;
+    var speed;
+    var live;
+    
+    this.init = function(){
+        me = this;
+        sprite = assetManager.getSprite("assets");
+        sprite.goToAndPlay("yogurtShot");
+        lifeDuration = 500;
+        stage.addChild(sprite);
+        live = true;
+        speed = 3;
+    }
+    
+    this.collide = function(){
+        sprite.goToAndPlay("yogurtHit");
+        sprite.addEventListener("animationend",remove)
+    }
+    
+    this.remove = function(){
+        live = false;
+        stage.removeChild(sprite);
+    }
+    
+    this.isLive = function(){
+        return live;
+    }
+    
+    this.update = function(){
+        if(live){
+            lifeDuration --;
+            if(lifeDuration <= 0){
+                me.remove();
+            }
+            checkCollision();
+        }
+    }
+    
+    function checkCollision(){
+        for(var i = 0;i<stage.children.length;i++){
+            if(stage.children[i].type === "boof" || stage.children[i].type === "ground"){
+                var intersection = ndgmr.checkRectCollision(sprite,stage.children[i]);
+                if(intersection !== null){
+                    if(stage.children[i].type === "boof"){
+                        stage.children[i].takeDamage();
+                    }
+                    me.collide();
+                }
+            }
+        }
+    }
+    
+    
 }
