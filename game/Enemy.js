@@ -9,6 +9,7 @@ var Enemy = function(stage,type,x,y,assetManager){
     var walkingRight;
     var speed;
     var ground;
+    var projectiles = new Array();
     var hero = new Object();
     var image = new Image();
     var gravity = 19;
@@ -44,6 +45,15 @@ var Enemy = function(stage,type,x,y,assetManager){
             //sprite.y += gravity;   
         }
         decide();
+        if(type==="yogi"){
+            for(var i = 0; i < projectiles.length; i ++){
+                if(!projectiles[i].isLive()){
+                    projectiles.splice(i,1);
+                }else{
+                    projectiles[i].update();
+                }
+            }
+        }
     }
     
     this.walkRight = function(){
@@ -111,7 +121,8 @@ var Enemy = function(stage,type,x,y,assetManager){
     }
      
     function shootProjectile(){
-        
+        var projectile = new Projectile(assetManager,sprite.x,sprite.y,stage);
+        projectiles.push(projectile);
     }
     
 }
@@ -129,6 +140,8 @@ var Projectile = function(assetManager,x,y,stage){
         sprite = assetManager.getSprite("assets");
         sprite.goToAndPlay("yogurtShot");
         lifeDuration = 500;
+        sprite.x = x;
+        sprite.y = y;
         stage.addChild(sprite);
         live = true;
         speed = 3;
@@ -154,6 +167,7 @@ var Projectile = function(assetManager,x,y,stage){
             if(lifeDuration <= 0){
                 me.remove();
             }
+            sprite.x -= speed;
             checkCollision();
         }
     }
