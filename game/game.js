@@ -13,7 +13,7 @@
     var rightKey = false;
     var shiftKey = false;
     var mapLoaded;
-    var levels = ["final1","level2","level3","level4"];
+    var levels = ["final3","final2","level3","level4"];
     var level;
     //holder for enemies
     var Enemies = Array();
@@ -208,6 +208,7 @@
                 container.removeAllChildren(); //dumpstage
                 stage.addChild(container);
                 onSetup();
+                Enemies.splice(0,Enemies.length);
             }
         }else{
             //game finished

@@ -202,25 +202,30 @@ var Hero = function(stage,assetManager,hud){
             if(stage.children[i].type !== "boof" && stage.children[i].type !== undefined){
                 var intersection = ndgmr.checkRectCollision(hitbox,stage.children[i]);
                 if(intersection !== null){
-                    do{
-                        sprite.y --;
-                        hitbox.y --;
-                    }while(ndgmr.checkRectCollision(hitbox,stage.children[i]) !== null);
-                    sprite.y ++;
-                    hitbox.y ++;
-                    touchingDown = true;
-                    console.log(stage.children[i].type);
-                    if(stage.children[i].type === "sharp" || stage.children[i].type === "hazard"){
+                    if(stage.children[i].type === "projectile"){
                         sprite.takeDamage();
-                    }
-                    //check if enemy was stomped
-                    if(stage.children[i].type === "enemy"){
-                        controller.startJump();
-                        stage.children[i].kill();
-                    }
-                    if(stage.children[i].type === "key"){//check if the player has reached the key
-                        levelComplete = true;
-                        stage.removeChild(stage.children[i]);
+                        stage.children[i].collide();
+                    }else{
+                        do{
+                            sprite.y --;
+                            hitbox.y --;
+                        }while(ndgmr.checkRectCollision(hitbox,stage.children[i]) !== null);
+                        sprite.y ++;
+                        hitbox.y ++;
+                        touchingDown = true;
+                        console.log(stage.children[i].type);
+                        if(stage.children[i].type === "sharp" || stage.children[i].type === "hazard"){
+                            sprite.takeDamage();
+                        }
+                        //check if enemy was stomped
+                        if(stage.children[i].type === "enemy"){
+                            controller.startJump();
+                            stage.children[i].kill();
+                        }
+                        if(stage.children[i].type === "key"){//check if the player has reached the key
+                            levelComplete = true;
+                            stage.removeChild(stage.children[i]);
+                        }
                     }
                     break;
                 }else{
@@ -237,6 +242,10 @@ var Hero = function(stage,assetManager,hud){
                     }
                     //check if the player has run into an enemy
                     if(stage.children[i].type === "enemy"){
+                        sprite.takeDamage();
+                    }
+                    if(stage.children[i].type === "projectile"){
+                        stage.children[i].collide();
                         sprite.takeDamage();
                     }
                     if(stage.children[i].type === "key"){//check if the player has reached the key

@@ -153,16 +153,18 @@ var Projectile = function(assetManager,x,y,stage){
         lifeDuration = 500;
         sprite.x = x;
         sprite.y = y;
+        sprite.type = "projectile";
+        sprite.collide = function(){
+            live = false;
+            sprite.gotoAndPlay("yogurtHit");
+            sprite.addEventListener("animationend",removeMe);
+        }
         stage.addChild(sprite);
         live = true;
         speed = 5;
     }
     
-    this.collide = function(){
-        live = false;
-        sprite.gotoAndPlay("yogurtHit");
-        sprite.addEventListener("animationend",removeMe);
-    }
+    
     
     function removeMe(e){
         if(e !== undefined){
@@ -184,7 +186,7 @@ var Projectile = function(assetManager,x,y,stage){
                 removeMe();
             }
             sprite.x -= speed;
-            checkCollision();
+            //checkCollision();
         }
     }
     
