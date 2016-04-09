@@ -26,5 +26,45 @@ var manifest = [
         src:"sounds/death.ogg",
         id:"death",
         data:3
+    },
+    {
+        src:"mapTest/waffle.png",
+        id:"waffle.png",
+        bitmap:true
+    },
+    {
+        src:"mapTest/waffleSyrup.png",
+        id:"waffleSyrup.png",
+        bitmap:true
+    },
+    {
+        src:"mapTest/pancake.png",
+        id:"pancake.png",
+        bitmap:true
+    },
+    {
+        src:"mapTest/pancake_leftend.png",
+        id:"pancake_leftend.png",
+        bitmap:true
+    },
+    {
+        src:"mapTest/pancake_rightend.png",
+        id:"pancake_rightend.png",
+        bitmap:true
+    },
+    {
+        src:"mapTest/key.png",
+        id:"key.png",
+        bitmap:true
+    },
+    {
+        src:"mapTest/forkNknife.png",
+        id:"forkNknife.png",
+        bitmap:true
+    },
+    {
+        src:"mapTest/border.png",
+        id:"border.png",
+        bitmap:true
     }
 ];

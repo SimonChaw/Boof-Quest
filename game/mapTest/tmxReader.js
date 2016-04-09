@@ -25,19 +25,16 @@
                     counter = 0;
                     y +=80;
                 }
-                var image = new Image();
-                if(currentData > 0){   
-                    image.src = "mapTest/" + arr.tilesets[currentData - 1].image;
+                var bitmap;
+                if(currentData > 0){  
+                    bitmap = assetManager.getBitmap(arr.tilesets[currentData - 1].image);
                     if(arr.tilesets[currentData - 1].image !== "forkNknife.png"){
-                        var bitmap = new createjs.Bitmap(image);
-                        bitmap.type ="ground";
+                        bitmap.type = "ground";
                         bitmap.y = y;
                         bitmap.x = counter * 80;
-                        //console.log(bitmap);
                         stage.addChild(bitmap);
                     }else{
-                       image.src = "mapTest/" + arr.tilesets[currentData - 1].image;
-                        var bitmap = new createjs.Bitmap(image);
+                       bitmap = assetManager.getBitmap(arr.tilesets[currentData - 1].image);
                         bitmap.type ="hazard";
                         bitmap.y = y;
                         bitmap.x = counter * 80;
@@ -48,14 +45,16 @@
                 }
                 
                 if(currentData == "M"){
-                    var enemy = new Enemy(stage,"mouldy",(counter * 80),y, assetManager);
+                    var enemy = new Enemy(stage,"mouldy",(counter * 80),(y - 80), assetManager);
                     //enemy.init();
+                    Enemies.push(enemy);
+                }else if(currentData === "Y"){
+                    var enemy = new Enemy(stage,"yogi",((counter * 80) - 65), (y - 50), assetManager);
                     Enemies.push(enemy);
                 }
                 
                 if(currentData == "K"){
-                    image.src = "mapTest/key.png";
-                    var bitmap = new createjs.Bitmap(image);
+                    bitmap = assetManager.getBitmap("key.png");
                     bitmap.type ="key";
                     bitmap.y = y;
                     bitmap.x = counter * 80;

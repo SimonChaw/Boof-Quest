@@ -75,7 +75,7 @@ var Hero = function(stage,assetManager,hud){
         //FEET
         hitbox.scaleX = 0.3;
         hitbox.scaleY = 0.3;
-        //hitbox.visible = false;
+        hitbox.visible = false;
         //BODY
         bodyBox.scaleX = 0.55;
         bodyBox.scaleY = 1.2;
@@ -128,7 +128,7 @@ var Hero = function(stage,assetManager,hud){
         speed = 10;
     }
     
-    this.takeDamage = function(colObj){
+    sprite.takeDamage = function(colObj){
         if(invisibilityTimer <= 0){
             createjs.Sound.play("crunch");
             hitpoints --; 
@@ -183,7 +183,7 @@ var Hero = function(stage,assetManager,hud){
     }
     
     function updateHealth(){
-        if(hitpoints > 1){
+        if(hitpoints > 0){
             var currentAnim = "health" + hitpoints; 
             if(healthHud.currentAnimation !== currentAnim){
                 healthHud.gotoAndPlay(currentAnim);
@@ -211,7 +211,7 @@ var Hero = function(stage,assetManager,hud){
                     touchingDown = true;
                     console.log(stage.children[i].type);
                     if(stage.children[i].type === "sharp" || stage.children[i].type === "hazard"){
-                        me.takeDamage();
+                        sprite.takeDamage();
                     }
                     //check if enemy was stomped
                     if(stage.children[i].type === "enemy"){
@@ -237,8 +237,7 @@ var Hero = function(stage,assetManager,hud){
                     }
                     //check if the player has run into an enemy
                     if(stage.children[i].type === "enemy"){
-                        
-                        me.takeDamage();
+                        sprite.takeDamage();
                     }
                     if(stage.children[i].type === "key"){//check if the player has reached the key
                         levelComplete = true;

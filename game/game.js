@@ -13,7 +13,7 @@
     var rightKey = false;
     var shiftKey = false;
     var mapLoaded;
-    var levels = ["level1","level2","level3","level4"];
+    var levels = ["final1","level2","level3","level4"];
     var level;
     //holder for enemies
     var Enemies = Array();

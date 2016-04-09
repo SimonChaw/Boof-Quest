@@ -57,6 +57,8 @@ var AssetManager = function(stage) {
     
     // array of spritesheet objects
     var spriteSheets = [];
+    //array for bitmaps aka tiles
+    var images = [];
     // array of JSON for each spritesheet
     var spriteSheetsJSON = [];
     // LoadQueue object
@@ -73,21 +75,28 @@ var AssetManager = function(stage) {
         // what type of asset was loaded?
         switch(e.item.type) {
             case createjs.LoadQueue.IMAGE:
-                // spritesheet loaded
-                // get id and source from manifest of currently loaded spritesheet
-                var id = e.item.id;
-                // store a reference to the actual image that was preloaded
-                var image = e.result;
-                // get data object from JSON array (previously loaded)
-                var data = spriteSheetsJSON[id];
-                // add images property to data object and tack on loaded spritesheet image from LoadQueue
-                // this is so that the SpriteSheet constructor doesn't preload the image again
-                // it will do this if you feed it the string path of the spritesheet
-                data.images = [image];
-                // construct Spritesheet object from source
-                var spriteSheet = new createjs.SpriteSheet(data);
-                // store spritesheet object for later retrieval
-                spriteSheets[id] = spriteSheet;
+                if(e.item.bitmap === true){
+                    //preload image tilesets
+                    var image = e.result;
+                    image.data = e.item.id;
+                    images.push(image);
+                }else{
+                    // spritesheet loaded
+                    // get id and source from manifest of currently loaded spritesheet
+                    var id = e.item.id;
+                    // store a reference to the actual image that was preloaded
+                    var image = e.result;
+                    // get data object from JSON array (previously loaded)
+                    var data = spriteSheetsJSON[id];
+                    // add images property to data object and tack on loaded spritesheet image from LoadQueue
+                    // this is so that the SpriteSheet constructor doesn't preload the image again
+                    // it will do this if you feed it the string path of the spritesheet
+                    data.images = [image];
+                    // construct Spritesheet object from source
+                    var spriteSheet = new createjs.SpriteSheet(data);
+                    // store spritesheet object for later retrieval
+                    spriteSheets[id] = spriteSheet;
+                }
                 break;
 
             case createjs.LoadQueue.JSON:
@@ -121,6 +130,14 @@ var AssetManager = function(stage) {
         sprite.y = 0;
         sprite.currentFrame = 0;
         return sprite;
+    };
+    
+    this.getBitmap = function(id){
+        for(var i = 0;i < images.length; i ++){
+            if(images[i].data === id){
+                return new createjs.Bitmap(images[i]);
+            }
+        }
     };
 
 	this.getSpriteSheet = function(id) {

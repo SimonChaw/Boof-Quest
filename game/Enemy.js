@@ -25,6 +25,8 @@ var Enemy = function(stage,type,x,y,assetManager){
             walkingLeft = true;
         }else if(type === "yogi"){
             shotTimer = 200;
+            sprite.scaleX = 0.8;
+            sprite.scaleY = 0.8;
             sprite.gotoAndPlay("yogiIdle");
         }
         sprite.x = x;
@@ -33,6 +35,8 @@ var Enemy = function(stage,type,x,y,assetManager){
             alive = false;
             if(type==="mouldy"){
                 sprite.gotoAndPlay("mouldyDeath");
+            }else if(type==="yogi"){
+                sprite.gotoAndPlay("yogiDeath");
             }
             sprite.addEventListener("animationend",onDeath);
         }
@@ -95,7 +99,8 @@ var Enemy = function(stage,type,x,y,assetManager){
                     shotTimer --;
                 }else{
                     shotTimer = 200;
-                    shootProjectile();
+                    sprite.gotoAndPlay("yogiShoot");
+                    sprite.addEventListener("animationend", onShoot);
                 }
             }
         }
@@ -108,6 +113,11 @@ var Enemy = function(stage,type,x,y,assetManager){
         stage.removeChild(sprite);
     }
     
+    function onShoot(e){
+        e.remove();
+        shootProjectile();
+    }
+    
     function isGrounded(){
         for(var i = 0;i<stage.children.length;i++){
             if(stage.children[i].type === "ground"){
@@ -118,14 +128,15 @@ var Enemy = function(stage,type,x,y,assetManager){
                     return false;
                 }
             }
+        }
     }
      
     function shootProjectile(){
-        var projectile = new Projectile(assetManager,sprite.x,sprite.y,stage);
+        var projectile = new Projectile(assetManager,(sprite.x + 40),(sprite.y + 20),stage);
+        projectile.init();
         projectiles.push(projectile);
     }
     
-}
 }
 
 var Projectile = function(assetManager,x,y,stage){
@@ -138,22 +149,27 @@ var Projectile = function(assetManager,x,y,stage){
     this.init = function(){
         me = this;
         sprite = assetManager.getSprite("assets");
-        sprite.goToAndPlay("yogurtShot");
+        sprite.gotoAndPlay("yogurtShot");
         lifeDuration = 500;
         sprite.x = x;
         sprite.y = y;
         stage.addChild(sprite);
         live = true;
-        speed = 3;
+        speed = 5;
     }
     
     this.collide = function(){
-        sprite.goToAndPlay("yogurtHit");
-        sprite.addEventListener("animationend",remove)
+        live = false;
+        sprite.gotoAndPlay("yogurtHit");
+        sprite.addEventListener("animationend",removeMe);
     }
     
-    this.remove = function(){
+    function removeMe(e){
+        if(e !== undefined){
+            e.remove();
+        }
         live = false;
+        sprite.stop();
         stage.removeChild(sprite);
     }
     
@@ -165,7 +181,7 @@ var Projectile = function(assetManager,x,y,stage){
         if(live){
             lifeDuration --;
             if(lifeDuration <= 0){
-                me.remove();
+                removeMe();
             }
             sprite.x -= speed;
             checkCollision();
