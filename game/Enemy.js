@@ -155,9 +155,11 @@ var Projectile = function(assetManager,x,y,stage){
         sprite.y = y;
         sprite.type = "projectile";
         sprite.collide = function(){
-            live = false;
-            sprite.gotoAndPlay("yogurtHit");
-            sprite.addEventListener("animationend",removeMe);
+            if(live){
+                live = false;
+                sprite.gotoAndPlay("yogurtHit");
+                sprite.addEventListener("animationend",removeMe);
+            }
         }
         stage.addChild(sprite);
         live = true;

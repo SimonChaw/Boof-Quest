@@ -20,8 +20,8 @@ var Controller = function(player){
         if(player.isTouchingDown()){
             createjs.Sound.play("jump");
             player.setJumping(true);
-            console.log("Jump started!");
-            velocity = -20;
+            //console.log("Jump started!");
+            velocity = -23;
         }
     }
     

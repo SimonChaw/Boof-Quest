@@ -40,7 +40,6 @@
                         bitmap.x = counter * 80;
                         //console.log(bitmap);
                         stage.addChild(bitmap);
-                        createHazard(bitmap); 
                     }
                 }
                 
@@ -63,18 +62,5 @@
                 counter ++;
             }
             stage.dispatchEvent(mapLoaded);
-        }
-        
-        function createHazard(bitmap){
-            console.log("creating hazard");
-            var image = new Image();
-            image.src = "assets/hitbox.png";
-            var hitbox = new createjs.Bitmap(image);
-            hitbox.scaleX = 0.3;
-            hitbox.scaleY = 0.2;
-            hitbox.x = bitmap.x + 5;
-            hitbox.y = bitmap.y + 15;
-            hitbox.type = "sharp";
-            stage.addChild(hitbox);
         }
     }

@@ -66,5 +66,35 @@ var manifest = [
         src:"mapTest/border.png",
         id:"border.png",
         bitmap:true
+    },
+    {
+        src:"assets/logo.png",
+        id:"logo",
+        bitmap:true
+    },
+    {
+        src:"assets/btnStart.png",
+        id:"btnStart",
+        bitmap:true
+    },
+    {
+        src:"assets/btnStart_clicked.png",
+        id:"btnStart_clicked",
+        bitmap:true
+    },
+    {
+        src:"assets/gameOverTitle.png",
+        id:"Game Over",
+        bitmap:true
+    },
+    {
+        src:"assets/btnRestart.png",
+        id:"btnRestart",
+        bitmap:true
+    },
+    {
+        src:"assets/btnRestart_clicked.png",
+        id:"btnRestart_clicked",
+        bitmap:true
     }
 ];

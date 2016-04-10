@@ -115,7 +115,7 @@ var Hero = function(stage,assetManager,hud){
     this.jump = function(velocity){
         sprite.y += velocity;
         velocity += 1;
-        console.log(velocity);
+        //console.log(velocity);
         return velocity;
     }
     
@@ -169,8 +169,7 @@ var Hero = function(stage,assetManager,hud){
     this.kill = function(){
         if(alive){
             alive = false;
-            sprite.gotoAndPlay("boofDeath");
-            sprite.addEventListener("animationend",onDeath);
+            sprite.gotoAndPlay("boofDeath"); sprite.addEventListener("animationend",onDeath);
         }
     }
     
@@ -213,8 +212,7 @@ var Hero = function(stage,assetManager,hud){
                         sprite.y ++;
                         hitbox.y ++;
                         touchingDown = true;
-                        console.log(stage.children[i].type);
-                        if(stage.children[i].type === "sharp" || stage.children[i].type === "hazard"){
+                        if(stage.children[i].type === "hazard"){
                             sprite.takeDamage();
                         }
                         //check if enemy was stomped
@@ -226,34 +224,43 @@ var Hero = function(stage,assetManager,hud){
                             levelComplete = true;
                             stage.removeChild(stage.children[i]);
                         }
+                        break;
                     }
-                    break;
                 }else{
                     touchingDown = false;
                 }
-                var intersection = ndgmr.checkRectCollision(bodyBox,stage.children[i]);
-                if(intersection !== null){
-                    if(stage.children[i].x > bodyBox.x){
-                        if(sprite.velX > 0)
-                            sprite.velX = 0;
-                    }else if(stage.children[i].x < bodyBox.x){
-                        if(sprite.velX < 0)
-                            sprite.velX = 0;
-                    }
-                    //check if the player has run into an enemy
-                    if(stage.children[i].type === "enemy"){
-                        sprite.takeDamage();
-                    }
-                    if(stage.children[i].type === "projectile"){
-                        stage.children[i].collide();
-                        sprite.takeDamage();
-                    }
-                    if(stage.children[i].type === "key"){//check if the player has reached the key
-                        levelComplete = true;
-                        stage.removeChild(stage.children[i]);
-                    }
+                    
                 }
+            }
+        for(var i = 0;i<stage.children.length;i++){
+            if(stage.children[i].type !== "boof" && stage.children[i].type !== undefined){
+            var intersection = ndgmr.checkRectCollision(bodyBox,stage.children[i]);
+                    if(intersection !== null){
+                        if(stage.children[i].type === "projectile"){
+                            stage.children[i].collide();
+                            sprite.takeDamage();
+                        }
+                        if(stage.children[i].type === "key"){//check if the player has reached the key
+                            levelComplete = true;
+                            stage.removeChild(stage.children[i]);
+                        }
+                        /*
+                        if(stage.children[i].y > (bodyBox.y - (20)) && (stage.children[i].type !== "projectile")){
+                            me.setJumping(false);
+                        }*/
+                        if(stage.children[i].x > bodyBox.x && (stage.children[i].type !== "projectile")){
+                            if(sprite.velX > 0)
+                                sprite.velX = 0;
+                        }else if(stage.children[i].x < bodyBox.x && (stage.children[i].type !== "projectile")){
+                            if(sprite.velX < 0)
+                                sprite.velX = 0;
+                        }
+                        //check if the player has run into an enemy
+                        if(stage.children[i].type === "enemy"){
+                            sprite.takeDamage();
+                        }
+                    }
+            }
             }
         }
     }
-}

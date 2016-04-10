@@ -13,7 +13,7 @@
     var rightKey = false;
     var shiftKey = false;
     var mapLoaded;
-    var levels = ["final3","final2","level3","level4"];
+    var levels = ["final1","final2","final3"];
     var level;
     //holder for enemies
     var Enemies = Array();
@@ -40,7 +40,6 @@
         // create stage object
         stage = new createjs.Stage(canvas);
         container = new createjs.Container();
-        stage.addChild(container);
         // construct preloader object to load spritesheet and sound assets
         assetManager = new AssetManager(stage);
         stage.addEventListener("onAllAssetsLoaded", titleScreen);
@@ -51,51 +50,35 @@
     
     function titleScreen(){
         console.log("Title Screen");
-        var button = new createjs.Shape();
-        button.graphics.beginFill("red").drawRect(0,0,400,100);
-        button.x = 200;
-        button.y = 200;
-        
-        var text = new createjs.Text();
-        text.set({
-            text:'Start Game',
+        var logo = assetManager.getBitmap("logo");
+        logo.scaleX = 0.8;
+        logo.scaleY = 0.8;
+        logo.x = 80;
+        logo.y = 0;
+        stage.addChild(logo);
+        var button = assetManager.getBitmap("btnStart");
+        button.x = 250;
+        button.y = 425;
+        button.on("mousedown",
+        function(e){
+            e.target.image = assetManager.getBitmap("btnStart_clicked").image;
+            stage.addChild(e.target);
+            stage.update();
         });
-        text.x = 280;
-        text.y = 240;
-        text.scaleX = 5;
-        text.scaleY = 5;
-        button.on("click",function(){stage.removeChild(button,text);
+        button.on("click",function(){stage.removeChild(button,logo);
                                     onSetup();});
-        stage.addChild(button,null,text);
+        stage.addChild(button);
         stage.update();
     }
 
     function onSetup() {
+        stage.addChild(container);
         createjs.Sound.play("bgmusic");
         console.log(">> setup");
         // kill event listener
         stage.removeEventListener("onAllAssetsLoaded", onSetup);
         
         loadMap(container, assetManager,Enemies, "mapTest/" + levels[level] + ".json");
-        //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
-        // construct game objects
-        //background = assetManager.getSprite("assets");
-        //background.gotoAndStop("background");
-        //stage.addChild(background);
-        
-        //introCaption = assetManager.getSprite("assets");
-        //introCaption.gotoAndStop("introCaption");
-        //introCaption.x = 50;
-        //introCaption.y = 50;
-        //stage.addChild(introCaption);
-        
-        //gameOverCaption = assetManager.getSprite("assets");
-        //gameOverCaption.gotoAndStop("gameOverCaption");
-        //gameOverCaption.x = 50;
-        //gameOverCaption.y = 50;
-        
-        //userInterface = new UserInterface(stage, assetManager, snakeMaxSpeed);
-        //userInterface.setupMe();	
         
         lastUpdate = Date.now();
         Boof = new Hero(container, assetManager,stage);
@@ -111,6 +94,7 @@
             Enemies[i].init();
         }
         Boof.init();
+        stage.on("click",function(){Boof.kill();});
         //zoom camera
         container.scaleX = 0.7;
         container.scaleY = 0.7;
@@ -133,26 +117,27 @@
     }
     
     function onGameOver(e) {
+        createjs.Ticker.removeEventListener("tick",onTick);
         createjs.Sound.stop("bgmusic");
         // gameOver
         stage.removeAllChildren();
         console.log("Game Over");
-        var button = new createjs.Shape();
-        button.graphics.beginFill("red").drawRect(0,0,400,100);
-        button.x = 200;
-        button.y = 200;
-        
-        var text = new createjs.Text();
-        text.set({
-            text:'You Died - Restart',
+        var gameOverTitle = assetManager.getBitmap("Game Over");
+        gameOverTitle.scaleX = 1.5;
+        gameOverTitle.scaleY = 1.5;
+        stage.addChild(gameOverTitle);
+        var button = assetManager.getBitmap("btnRestart");
+        button.x = 250;
+        button.y = 425;
+        button.on("mousedown",
+        function(e){
+            e.target.image = assetManager.getBitmap("btnRestart_clicked").image;
+            stage.addChild(e.target);
+            stage.update();
         });
-        text.x = 220;
-        text.y = 240;
-        text.scaleX = 4.5;
-        text.scaleY = 4.5;
-        button.on("click",function(){stage.removeChild(button,text);
+        button.on("click",function(){stage.removeChild(button,gameOverTitle);
                                     onSetup();});
-        stage.addChild(button,null,text);
+        stage.addChild(button);
         stage.update();
         // remove all listeners
         //document.removeEventListener("keydown", onKeyDown);
@@ -164,12 +149,11 @@
     }    
 
     function onKeyDown(e) {
-        // which keystroke is down?
-        if (e.keyCode == 37){
+        if (e.keyCode == 65){
             leftKey = true;
-        }else if(e.keyCode == 39){
+        }else if(e.keyCode == 68){
             rightKey = true;
-        }else if (e.keyCode == 38 && !upKey){
+        }else if (e.keyCode == 87 && !upKey){
             upKey = true;
             Boof.getController().startJump();
         }
@@ -178,16 +162,13 @@
         }else if(e.keyCode == 16){
             shiftKey = true;
         }
-        
-        //console.log(e.keyCode);
     }
 
     function onKeyUp(e) {
-        
         // which keystroke is up?
-        if (e.keyCode == 37) leftKey = false; 
-        else if (e.keyCode == 39) rightKey = false;
-        else if (e.keyCode == 38){ upKey = false; Boof.getController().endJump();}
+        if (e.keyCode == 65) leftKey = false; 
+        else if (e.keyCode == 68) rightKey = false;
+        else if (e.keyCode == 87){ upKey = false; Boof.getController().endJump();}
         else if (e.keyCode == 40) downKey = false;
         else if (e.keyCode == 16) shiftKey = false;
         
@@ -206,7 +187,6 @@
                 createjs.Sound.stop("bgmusic");
                 stage.removeAllChildren();
                 container.removeAllChildren(); //dumpstage
-                stage.addChild(container);
                 onSetup();
                 Enemies.splice(0,Enemies.length);
             }
