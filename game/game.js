@@ -1,7 +1,3 @@
-// Munch implemented in HTML5
-// Sean Morrow
-// May 12, 2014
-
 "use strict";
 (function() {
 
@@ -16,6 +12,12 @@
     var leftKey = false;
     var rightKey = false;
     var shiftKey = false;
+    var mapLoaded;
+    var score = 0;
+    var levels = ["final1","final2","final3"];
+    var level;
+    //holder for enemies
+    var Enemies = Array();
     // frame rate of game
     var frameRate = 26;
     var Boof;
@@ -29,7 +31,8 @@
     // ------------------------------------------------------------ event handlers
     function onInit() {
         console.log(">> initializing");
-
+        level = 0;
+        mapLoaded = false;
         // get reference to canvas
         canvas = document.getElementById("stage");
         // set canvas to as wide/high as the browser window
@@ -38,61 +41,72 @@
         // create stage object
         stage = new createjs.Stage(canvas);
         container = new createjs.Container();
-        stage.addChild(container);
-        loadMap(container);
         // construct preloader object to load spritesheet and sound assets
-        assetManager = new AssetManager(stage);
-        stage.addEventListener("onAllAssetsLoaded", onSetup);
+        assetManager = new AssetManager(stage,canvas);
+        stage.addEventListener("onAllAssetsLoaded", titleScreen);
         // load the assets
+        /*
+        
+        */
+        stage.update();
+        createjs.Ticker.addEventListener("tick",function(){});
         assetManager.loadAssets(manifest);
+    }
+    
+    function titleScreen(){
+        createjs.Sound.play("title");
+        console.log("Title Screen");
+        var logo = assetManager.getBitmap("logo");
+        logo.scaleX = 0.8;
+        logo.scaleY = 0.8;
+        logo.x = 80;
+        logo.y = 0;
+        stage.addChild(logo);
+        var button = assetManager.getBitmap("btnStart");
+        button.x = 250;
+        button.y = 425;
+        button.on("mousedown",
+        function(e){
+            e.target.image = assetManager.getBitmap("btnStart_clicked").image;
+            stage.addChild(e.target);
+            stage.update();
+        });
+        button.on("click",function(){stage.removeChild(button,logo);createjs.Sound.stop("title");
+                                    onSetup();});
+        stage.addChild(button);
+        stage.update();
     }
 
     function onSetup() {
+        stage.addChild(container);
+        createjs.Sound.play("bgmusic");
         console.log(">> setup");
         // kill event listener
         stage.removeEventListener("onAllAssetsLoaded", onSetup);
-
-        //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
-        // construct game objects
-        //background = assetManager.getSprite("assets");
-        //background.gotoAndStop("background");
-        //stage.addChild(background);
         
-        //introCaption = assetManager.getSprite("assets");
-        //introCaption.gotoAndStop("introCaption");
-        //introCaption.x = 50;
-        //introCaption.y = 50;
-        //stage.addChild(introCaption);
+        loadMap(container, assetManager,Enemies, "mapTest/" + levels[level] + ".json");
         
-        //gameOverCaption = assetManager.getSprite("assets");
-        //gameOverCaption.gotoAndStop("gameOverCaption");
-        //gameOverCaption.x = 50;
-        //gameOverCaption.y = 50;
-        
-        //userInterface = new UserInterface(stage, assetManager, snakeMaxSpeed);
-        //userInterface.setupMe();	
-        
-        
-        // startup the ticker
-        createjs.Ticker.setFPS(frameRate);
-        createjs.Ticker.addEventListener("tick", onTick);
         lastUpdate = Date.now();
-        for(var i = 0;i <  container.children.length; i ++){
-            if(container.children[i].type == "ground"){
-                ground.push(container.children[i]);
-            }
-        }
-        Boof = new Hero(container, assetManager,ground);
+        Boof = new Hero(container, assetManager,stage,score);
         Boof.sprite = Boof.getSprite();
         //myInterval = setInterval(onTick,0);
-        onStartGame();
+        container.addEventListener("mapLoaded",onStartGame);
+        console.log("mapTest/" + levels[level] + ".json");
     }
 
     function onStartGame(e) {
-        
-        // start the snake object
+        container.removeEventListener("mapLoaded",onStartGame);
+        for(var i = 0; i < Enemies.length; i ++){
+            Enemies[i].init();
+        }
         Boof.init();
+        //Boof.sprite.on("click",function(){onWin();});
+        //zoom camera
+        container.scaleX = 0.7;
+        container.scaleY = 0.7;
+        // start the snake object
         
+        console.log("Boof Initilized");
         // current state of keys
         leftKey = false;
         rightKey = false;
@@ -109,48 +123,152 @@
     }
     
     function onGameOver(e) {
+        createjs.Ticker.removeEventListener("tick",onTick);
+        createjs.Sound.stop("bgmusic");
+        createjs.Sound.play("gameover");
+        score = 0;
         // gameOver
-
-
+        stage.removeAllChildren();
+        console.log("Game Over");
+        var gameOverTitle = assetManager.getBitmap("Game Over");
+        gameOverTitle.scaleX = 1.5;
+        gameOverTitle.scaleY = 1.5;
+        gameOverTitle.x = 170;
+        gameOverTitle.y = 0;
+        stage.addChild(gameOverTitle);
+        var button = assetManager.getBitmap("btnRestart");
+        button.x = 250;
+        button.y = 300;
+        button.on("mousedown",
+        function(e){
+            e.target.image = assetManager.getBitmap("btnRestart_clicked").image;
+            stage.addChild(e.target);
+            stage.update();
+        });
+        button.on("click",function(){
+            stage.removeChild(button,gameOverTitle);
+            cleanUpStage();
+            createjs.Sound.stop("gameover");
+            onSetup();
+        });
+        stage.addChild(button);
+        stage.update();
         // remove all listeners
-        document.removeEventListener("keydown", onKeyDown);
-        document.removeEventListener("keyup", onKeyUp);
+        //document.removeEventListener("keydown", onKeyDown);
+        //document.removeEventListener("keyup", onKeyUp);
     }
-
+    
+    
+    function cleanUpStage(){
+        for(var i = 0; i<Enemies.length;i++){
+                Enemies[i].killInstantly();
+            }
+        Enemies.splice(0,Enemies.length);
+    }
+    
     function onResetGame(e) {
         console.log("Reseting");
-    }    
+        container.removeAllChildren();
+        level = 0;
+        onSetup();
+    } 
+    
+    function colorChanger(){
+        
+    }
+    
+    function onWin(){
+        createjs.Ticker.removeEventListener("tick",onTick);
+        createjs.Sound.stop("bgmusic");
+        stage.removeAllChildren();
+        //setup win interface
+        var winTitle = assetManager.getBitmap("winTitle");
+        winTitle.x = 100;
+        winTitle.y = 0;
+        var txtScore = new createjs.Text();
+        txtScore.set({
+            text: "Your score was: " + score,
+            font: "bold 25px Fantasy",
+            x: 400,
+            y: 400
+        })
+        var button = assetManager.getBitmap("btnReset");
+        button.x = 400;
+        button.y = 300;
+        button.on("mousedown",
+        function(e){
+            e.target.image = assetManager.getBitmap("btnReset_clicked").image;
+            stage.addChild(e.target);
+            stage.update();
+        });
+        button.on("click",
+                 function(){
+            stage.removeChild(button, winTitle,txtScore);
+            stage.update();
+            cleanUpStage();
+            onResetGame();
+        });
+        stage.addChild(button, winTitle,txtScore);
+        stage.update();
+        
+    }
 
     function onKeyDown(e) {
-        // which keystroke is down?
-        if (e.keyCode == 37){
+        if (e.keyCode == 65){
             leftKey = true;
-        }else if(e.keyCode == 39){
+        }else if(e.keyCode == 68){
             rightKey = true;
-        }else if (e.keyCode == 38){
+        }else if (e.keyCode == 87 && !upKey){
             upKey = true;
+            Boof.getController().startJump(e);
         }
         else if (e.keyCode == 40){
             downKey = true;
         }else if(e.keyCode == 16){
             shiftKey = true;
         }
-        
-        //console.log(e.keyCode);
     }
 
     function onKeyUp(e) {
-        
         // which keystroke is up?
-        if (e.keyCode == 37) leftKey = false; 
-        else if (e.keyCode == 39) rightKey = false;
-        else if (e.keyCode == 38) upKey = false;
+        if (e.keyCode == 65) leftKey = false; 
+        else if (e.keyCode == 68) rightKey = false;
+        else if (e.keyCode == 87){ upKey = false; Boof.getController().endJump(e);}
         else if (e.keyCode == 40) downKey = false;
         else if (e.keyCode == 16) shiftKey = false;
         
         if(e.keyCode ==37 || e.keyCode == 39){Boof.sprite.gotoAndStop("boofWalk");}
     }
 
+    function loadNextLevel(){
+    if((level + 1) < levels.length){
+            if(container.scaleX < 1.2){
+                container.scaleX += 0.01;
+                container.scaleY += 0.01;
+                container.x = container.x * 1.3;
+                container.y = container.y * 1.8;          
+            }else{
+                level ++;
+                createjs.Sound.stop("bgmusic");
+                stage.removeAllChildren();
+                container.removeAllChildren(); //dumpstage
+                cleanUpStage();
+                score = Boof.getScore();
+                onSetup();
+            }
+        }else{
+            if(container.scaleX < 1.2){
+                container.scaleX += 0.01;
+                container.scaleY += 0.01;
+                container.x = container.x * 1.3;
+                container.y = container.y * 1.8;          
+            }else{
+                score = Boof.getScore();
+                onWin();
+            }
+        }
+    }
+    
     function onTick(e) {
         // TESTING FPS
         document.getElementById("fps").innerHTML = createjs.Ticker.getMeasuredFPS();
@@ -167,10 +285,21 @@
             }else{
                 Boof.walk();
             }
-            Boof.update(deltaTime);
             Boof.getController().update(upKey,rightKey,leftKey);
+        }else if(!Boof.isAlive() && !Boof.isWaiting()){
+            console.log(Boof.isWaiting());
+            onGameOver();
+        }else{
+            Boof.getController().update();
         }
+        Boof.update(deltaTime);
         
+        for(var i = 0; i < Enemies.length; i ++){
+            Enemies[i].update();
+        }
+        if(Boof.levelCompleted()){
+            loadNextLevel();
+        }
         // update the stage!
         stage.update();
     }

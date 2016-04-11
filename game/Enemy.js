@@ -1,51 +1,70 @@
 var Enemy = function(stage,type,x,y,assetManager){
     //properties
+    var me = this;
     var sprite;
     var alive;
     var walkTimer;
+    var shotTimer;
     var walkingLeft;
     var walkingRight;
     var speed;
     var ground;
+    var projectiles = new Array();
     var hero = new Object();
     var image = new Image();
-    var bodybox;
     var gravity = 19;
     
     this.init = function(){
         alive = true;
-        image.src = "assets/hitbox.png";
-        bodybox = new createjs.Bitmap(image);
-        for(var i = 0;i <  stage.children.length; i ++){
-            if(stage.children[i].type == "ground"){
-                ground.push(container.children[i]);
-            }else if(stage.children[i].type == "feet"){
-                hero.feet = stage.children[i];
-            }else if(stage.children[i].type == "body"){
-                hero.body = stage.children[i];
-            }
-            else if(stage.children[i].type == "boof"){
-                hero.sprite = stage.children[i];
-            }
-        }
         sprite = assetManager.getSprite("assets");
+        sprite.type = "enemy";
         if(type === "mouldy"){
-            walkTimer = 60;
+            walkTimer = 100;
             sprite.gotoAndPlay("mouldyWalk");
-            speed = 2;
+            speed = 4;
+            walkingLeft = true;
+        }else if(type === "yogi"){
+            shotTimer = 200;
+            sprite.scaleX = 0.8;
+            sprite.scaleY = 0.8;
+            sprite.gotoAndPlay("yogiIdle");
         }
-        stage.addChild(bodybox);
+        sprite.x = x;
+        sprite.y = y;
+        sprite.kill = function(){
+            alive = false;
+            if(type==="mouldy"){
+                sprite.gotoAndPlay("mouldyDeath");
+            }else if(type==="yogi"){
+                sprite.gotoAndPlay("yogiDeath");
+            }
+            sprite.addEventListener("animationend",onDeath);
+        };
+        sprite.isAlive = function(){
+            return alive;
+        };
+        stage.addChild(sprite);
+        
+    }
+    
+    this.killInstantly = function(){
+        onDeath();
     }
     
     this.update = function(){
-        bodybox.x = sprite.x;
-        bodybox.y = sprite.y;
         if(!isGrounded()){
-            sprite.y -= gravity;   
+            //sprite.y += gravity;   
         }
         decide();
-        
-        
+        if(type==="yogi"){
+            for(var i = 0; i < projectiles.length; i ++){
+                if(!projectiles[i].isLive()){
+                    projectiles.splice(i,1);
+                }else{
+                    projectiles[i].update();
+                }
+            }
+        }
     }
     
     this.walkRight = function(){
@@ -60,51 +79,149 @@ var Enemy = function(stage,type,x,y,assetManager){
         sprite.x -= speed;
     }
     
-    this.kill(){
-        alive = false;
-        if(type=="mouldy"){
-            sprite.gotoAndPlay("mouldyDeath");
-            sprite.addEventListener();
+    
+    
+    function decide(){
+        if(alive){
+            if(type==="mouldy"){
+                if(walkingLeft){
+                    me.walkLeft();
+                    walkTimer --;
+                    if(walkTimer == 0){
+                        walkingLeft = false;
+                        walkingRight = true;
+                        walkTimer = 60;
+                    }
+                }else if(walkingRight){
+                    me.walkRight();
+                    walkTimer --;
+                    if(walkTimer == 0){
+                        walkingLeft = true;
+                        walkingRight = false;
+                        walkTimer = 60;
+                    }
+                }
+            }else if(type === "yogi"){
+                if(shotTimer > 0){
+                    shotTimer --;
+                }else{
+                    shotTimer = 200;
+                    sprite.gotoAndPlay("yogiShoot");
+                    sprite.addEventListener("animationend", onShoot);
+                }
+            }
         }
     }
     
-    function decide(){
-        if(type==="mouldy"){
-            if(walkingLeft){
-                this.walkLeft();
-                walkTimer --;
-                if(walkTimer == 0){
-                    walkingLeft = false;
-                    walkingRight = true;
-                    walkTimer = 60;
-                }
-            }else if(walkingRight){
-                this.walkRight();
-                walkTimer --;
-                if(walkTimer == 0){
-                    walkingLeft = true;
-                    walkingRight = false;
-                    walkTimer = 60;
+    function onDeath(e){
+        createjs.Sound.play("death");
+        sprite.stop();
+        if(e !== undefined)
+            e.remove();
+        stage.removeChild(sprite);
+        if(type === "yogi")
+            killAllProjectiles();
+    }
+    
+    function onShoot(e){
+        e.remove();
+        shootProjectile();
+    }
+    
+    function killAllProjectiles(){
+        for(var i = 0; i < projectiles.length; i ++){
+            projectiles[i].removeMe();
+        }
+        projectiles.splice(0,projectiles.length);
+    }
+    
+    function isGrounded(){
+        for(var i = 0;i<stage.children.length;i++){
+            if(stage.children[i].type === "ground"){
+                var intersection = ndgmr.checkRectCollision(sprite,stage.children[i]);
+                if(intersection !== null){
+                    return true;
+                }else{
+                    return false;
                 }
             }
+        }
+    }
+     
+    function shootProjectile(){
+        var projectile = new Projectile(assetManager,(sprite.x + 40),(sprite.y + 20),stage);
+        projectile.init();
+        projectiles.push(projectile);
+    }
+    
+}
+
+var Projectile = function(assetManager,x,y,stage){
+    var sprite;
+    var lifeDuration;
+    var me;
+    var speed;
+    var live;
+    
+    this.init = function(){
+        me = this;
+        sprite = assetManager.getSprite("assets");
+        sprite.gotoAndPlay("yogurtShot");
+        lifeDuration = 500;
+        sprite.x = x;
+        sprite.y = y;
+        sprite.type = "projectile";
+        sprite.collide = function(){
+            if(live){
+                live = false;
+                sprite.gotoAndPlay("yogurtHit");
+                sprite.addEventListener("animationend",me.removeMe);
+            }
+        }
+        stage.addChild(sprite);
+        live = true;
+        speed = 5;
+    }
+    
+    
+    
+    this.removeMe = function(e){
+        if(e !== undefined){
+            e.remove();
+        }
+        live = false;
+        sprite.stop();
+        stage.removeChild(sprite);
+    }
+    
+    this.isLive = function(){
+        return live;
+    }
+    
+    this.update = function(){
+        if(live){
+            lifeDuration --;
+            if(lifeDuration <= 0){
+                me.removeMe();
+            }
+            sprite.x -= speed;
+            //checkCollision();
         }
     }
     
     function checkCollision(){
-        var intersection = ndgmr.checkRectCollision(hero.feet, sprite);
-        if(intersection !== null){
-               
+        for(var i = 0;i<stage.children.length;i++){
+            if(stage.children[i].type === "boof" || stage.children[i].type === "ground"){
+                var intersection = ndgmr.checkRectCollision(sprite,stage.children[i]);
+                if(intersection !== null){
+                    if(stage.children[i].type === "boof"){
+                        stage.children[i].takeDamage();
+                    }
+                    me.collide();
+                }
+            }
         }
     }
     
-    function isGrounded(){
-        for(var i = 0;i<ground.length;i++){
-            var intersection = ndgmr.checkRectCollision(hitbox,ground[i]);
-            if(intersection !== null){
-                return true;
-            }else{
-                return false;
-            }
-    }
     
 }

@@ -1,34 +1,42 @@
 var Controller = function(player){
     var states = ["walking","jumping","still"];
     var currentState;
-    var maxJumpForce;
-    var jumping;
-    var currentJumpForce;
-    var maxHeight;
+    var jumpSuccessful;
+    var velocity;
     
     this.init = function(){
         currentState = "";
         maxHeight = false;
-        maxJumpForce = 10;
-        currentJumpForce = 0;
-        startingJump = false;
         player.sprite = player.getSprite();
         console.log(player.sprite);
     }
     
     function jumpStarted(e){
-        jumping = true;
+        startJump = false;
         e.remove();
     }
     
+    this.startJump = function(e){
+        if(player.isTouchingDown() || !player.isAlive()){
+            console.log("Jump started");
+            jumpSuccessful = true;
+            createjs.Sound.play("jump");
+            player.setJumping(true);
+            //console.log("Jump started!");
+            velocity = -23; 
+        }
+    }
+    
+    this.endJump = function(e){
+        if(jumpSuccessful && velocity < -6)
+            velocity = -6;
+            console.log("Jump ended!");
+            jumpSuccessful = false;
+    }
     
     
     this.updateAnimation = function(){
-        //console.log(currentState);
-        if(currentState === states[1] && player.isTouchingDown()){
-            playIfNotPlaying("boofJumpStart");
-            player.sprite.addEventListener("animationend",jumpStarted);
-        }else if(!player.isTouchingDown()){
+        if(!player.isTouchingDown()){
             playIfNotPlaying("boofAir");
         }else if(currentState === states[0]){
             playIfNotPlaying("boofWalk");
@@ -38,25 +46,32 @@ var Controller = function(player){
     }
     
     this.update = function(upKey,rightKey,leftKey){
-        if(upKey){
-            currentState = states[1]; 
-        }else if(player.isTouchingDown() && (leftKey || rightKey)){
-            currentState = states[0];
-        }else if(player.isTouchingDown() && !(leftKey || rightKey)){
-            currentState = states[2];
+        if(player.isAlive() || player.isWaiting()){
+            if(upKey){
+                if(!player.isJumping()){startJump = true;}
+                currentState = states[1]; 
+            }else if(player.isTouchingDown() && (leftKey || rightKey)){
+                currentState = states[0];
+            }else if(player.isTouchingDown() && !(leftKey || rightKey)){
+                currentState = states[2];
+            }
+
+            if(player.isJumping()){
+                velocity = player.jump(velocity);
+                if(velocity > 0)
+                    if(player.isTouchingDown())
+                        player.setJumping(false);
+                    
+            }
+
+            if(rightKey){
+                player.walkRight();
+            }else if(leftKey){
+                player.walkLeft();
+            }
+
+            this.updateAnimation();
         }
-        
-        if(jumping){
-            jumping = player.jump(upKey);
-        }
-        
-        if(rightKey){
-            player.walkRight();
-        }else if(leftKey){
-            player.walkLeft();
-        }
-        
-        this.updateAnimation();
     }
     
     function playIfNotPlaying(animationName){
