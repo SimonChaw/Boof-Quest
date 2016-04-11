@@ -52,8 +52,22 @@
 * > use soundsJS to access preloaded sounds in code
 */
 
-var AssetManager = function(stage) {
+var AssetManager = function(stage,canvas) {
     "use strict";    
+    var loadProgressLabel = new createjs.Text("","18px Verdana","black");
+    loadProgressLabel.lineWidth = 200;
+    loadProgressLabel.textAlign = "center";
+    loadProgressLabel.x = canvas.width/2;
+    loadProgressLabel.y = 50;
+    stage.addChild(loadProgressLabel);
+    var loadingBarContainer = new createjs.Container();
+    var loadingBarHeight = 20;
+    var loadingBarWidth = 300;
+    var LoadingBarColor = createjs.Graphics.getRGB(0,0,0);
+    var loadingBar = new createjs.Shape();
+    loadingBar.graphics.beginFill(LoadingBarColor).drawRect(0, 0, 1, loadingBarHeight).endFill();
+    var frame = new createjs.Shape();
+    var padding = 3;
     
     // array of spritesheet objects
     var spriteSheets = [];
@@ -111,8 +125,18 @@ var AssetManager = function(stage) {
     function onError(e) {
         console.log("ASSETMANAGER ERROR > Error Loading asset");
     }
+    
+    function updateProgress(e){
+        loadingBar.scaleX = preloader.progress * loadingBarWidth;
+ 
+        var progressPercentage = Math.round(preloader.progress*100);
+        loadProgressLabel.text = progressPercentage + "% Loaded" ;
+
+        stage.update();
+    }
 
     function onComplete(e) {
+        stage.removeAllChildren();
         console.log("All assets loaded");
         spriteSheetsJSON = null;
         // kill event listeners
@@ -145,15 +169,22 @@ var AssetManager = function(stage) {
 	};
 
     this.loadAssets = function(manifest) {
+        frame.graphics.setStrokeStyle(1).beginStroke(LoadingBarColor).drawRect(-padding/2, -padding/2, loadingBarWidth+padding, loadingBarHeight+padding);
+        loadingBarContainer.addChild(loadingBar, frame);
+        loadingBarContainer.x = Math.round(canvas.width/2 - loadingBarWidth/2);
+        loadingBarContainer.y = canvas.height /2;
+        stage.addChild(loadingBarContainer);
         // if browser doesn't suppot the ogg it will attempt to look for an mp3
         createjs.Sound.alternateExtensions = ["mp3","wav"];
         // registers the PreloadJS object with SoundJS - will automatically have access to all sound assets
         preloader.installPlugin(createjs.Sound);
         preloader.addEventListener("fileload", onLoaded);
         preloader.addEventListener("error", onError);
+        preloader.addEventListener("progress",updateProgress);
         preloader.addEventListener("complete", onComplete);
         preloader.setMaxConnections(1);
         // load first spritesheet to start preloading process
         preloader.loadManifest(manifest);
+        
     };
 };
