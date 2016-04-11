@@ -1,4 +1,4 @@
-var Hero = function(stage,assetManager,hud){
+var Hero = function(stage,assetManager,hud,score){
     //BOOF: CURRENT INFO - JUMP HEIGHT: 2 TILES. JUMP SPAN: 3 TILES
     
     //init
@@ -7,6 +7,8 @@ var Hero = function(stage,assetManager,hud){
     var alive = true;
     var hitpoints;
     var healthHud;
+    var waiting;
+    var txtScore;
     //keep track of scope
     var me = this;
     var speed = 10;
@@ -38,6 +40,10 @@ var Hero = function(stage,assetManager,hud){
         return alive;
     }
     
+    this.isWaiting = function(){
+        return waiting;
+    }
+    
     this.getController = function(){
         return controller;
     }
@@ -54,6 +60,10 @@ var Hero = function(stage,assetManager,hud){
         return speed;
     }
     
+    this.getScore = function(){
+        return score;
+    }
+    
     this.levelCompleted = function(){
         return levelComplete;
     }
@@ -68,6 +78,10 @@ var Hero = function(stage,assetManager,hud){
     
     //-------- public methods
     this.init = function(){
+        txtScore = new createjs.Text();
+        txtScore.x = 10;
+        txtScore.y = 0;
+        updateScore();
         //BOOF
         sprite.x = 0;
         sprite.y = 0;
@@ -85,6 +99,7 @@ var Hero = function(stage,assetManager,hud){
         stage.addChild(hitbox);
         stage.addChild(sprite);
         maxHeight = false;
+        waiting = true;
         alive = true;
         controller = new Controller(me);
         controller.init();
@@ -94,6 +109,7 @@ var Hero = function(stage,assetManager,hud){
         healthHud.scaleX = 0.6;
         healthHud.scaleY = 0.6;
         hud.addChild(healthHud);
+        hud.addChild(txtScore);
         hitpoints = 4;
         healthHud.gotoAndPlay("health4");
         levelComplete = false;
@@ -138,7 +154,13 @@ var Hero = function(stage,assetManager,hud){
     
     
     this.update = function(deltaTime){
+        console.log(sprite.y);
         if(alive){
+            if(sprite.y > 2100){
+                waiting = false;
+                alive = false;
+                stage.removeChild(sprite);
+            }
             if(invisibilityTimer > 0){
                 sprite.visible = !sprite.visible;
                 invisibilityTimer --;
@@ -148,7 +170,7 @@ var Hero = function(stage,assetManager,hud){
             stage.x = (sprite.x/1.43 * -1) + 150;
             stage.y = (sprite.y/1.5) * -1 + 200;
             checkIfGrounded();
-            hitbox.x = sprite.x + 90;
+            hitbox.x = sprite.x + 100;
             hitbox.y = sprite.y + 140;
             bodyBox.x = sprite.x + 70;
             bodyBox.y = sprite.y + 25;
@@ -160,6 +182,12 @@ var Hero = function(stage,assetManager,hud){
             }
         }else{
             sprite.visible = true;
+            if(sprite.y < 2100){
+                waiting = true;
+            }else{
+                waiting = false;
+                stage.removeChild(sprite);
+            }
         }
         if((!touchingDown || !alive) &&  !jumping){
                 sprite.y += gravity * deltaTime;
@@ -168,7 +196,9 @@ var Hero = function(stage,assetManager,hud){
     
     this.kill = function(){
         if(alive){
+            hud.removeChild(healthHud);
             alive = false;
+            controller.startJump();
             sprite.gotoAndPlay("boofDeath"); sprite.addEventListener("animationend",onDeath);
         }
     }
@@ -196,6 +226,13 @@ var Hero = function(stage,assetManager,hud){
         }
     }
     
+    function updateScore(){
+        txtScore.set({
+            text: "SCORE: " + score,
+            font: "bold 25px Fantasy"
+        })
+    }
+    
     function checkIfGrounded(){
         for(var i = 0;i<stage.children.length;i++){
             if(stage.children[i].type !== "boof" && stage.children[i].type !== undefined){
@@ -219,9 +256,12 @@ var Hero = function(stage,assetManager,hud){
                         if(stage.children[i].type === "enemy"){
                             controller.startJump();
                             stage.children[i].kill();
+                            score += 50;
+                            updateScore();
                         }
                         if(stage.children[i].type === "key"){//check if the player has reached the key
-                            levelComplete = true;
+                            levelComplete = true; 
+                            createjs.Sound.play("key");
                             stage.removeChild(stage.children[i]);
                         }
                         break;
@@ -242,6 +282,7 @@ var Hero = function(stage,assetManager,hud){
                         }
                         if(stage.children[i].type === "key"){//check if the player has reached the key
                             levelComplete = true;
+                            createjs.Sound.play("key");
                             stage.removeChild(stage.children[i]);
                         }
                         /*
@@ -257,7 +298,8 @@ var Hero = function(stage,assetManager,hud){
                         }
                         //check if the player has run into an enemy
                         if(stage.children[i].type === "enemy"){
-                            sprite.takeDamage();
+                            if(stage.children[i].isAlive())
+                                sprite.takeDamage();
                         }
                     }
             }

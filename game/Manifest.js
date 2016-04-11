@@ -18,6 +18,21 @@ var manifest = [
         data:1
     },
     {
+        src:"sounds/titlescreen.ogg",
+        id:"title",
+        data:5
+    },
+    {
+        src:"sounds/gameover.ogg",
+        id:"gameover",
+        data:5
+    },
+    {
+        src:"sounds/key.ogg",
+        id:"key",
+        data:5
+    },
+    {
         src:"sounds/munch.ogg",
         id:"crunch",
         data:2
@@ -95,6 +110,21 @@ var manifest = [
     {
         src:"assets/btnRestart_clicked.png",
         id:"btnRestart_clicked",
+        bitmap:true
+    },
+    {
+        src:"assets/btnReset.png",
+        id:"btnReset",
+        bitmap:true
+    },
+    {
+        src:"assets/btnReset_clicked.png",
+        id:"btnReset_clicked",
+        bitmap:true
+    },
+    {
+        src:"assets/winTitle.png",
+        id:"winTitle",
         bitmap:true
     }
 ];

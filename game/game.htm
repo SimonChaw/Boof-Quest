@@ -1,11 +1,61 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link href='https://fonts.googleapis.com/css?family=Oswald:400,700' rel='stylesheet' type='text/css'>
         <title>Boof Quest</title>
+        <style>
+            body{
+                background-color: black;
+                margin: 0;
+            }
+            header{
+                width: 100%;
+                text-align: center;
+                margin-bottom: 1%;
+            }
+            #logo{
+                width: 20%;
+                height: auto;
+                display: inline-block;
+                margin: 0 auto;
+            }
+            #gameContainer{
+                width: 100%;
+                text-align: center;
+            }
+            canvas{
+                margin: 0 auto;
+            }
+            .asideHelper{
+                font-family: "Oswald";
+                position: fixed;
+                margin-left: 2%;
+                border: 2px solid yellow;
+                background-color:#003471;
+                padding: 0.5%;
+                color: yellow;
+                text-align: center;
+            }
+            
+            @media(max-width:1700px){
+                .asideHelper{
+                    display:none;
+                }
+            }
+        </style>
     </head>
     <body>
-        <header>Boof Quest</header>
-        <canvas id="stage" style="background-color:skyblue;"></canvas>
+        <header><img id="logo" src="assets/logo.png"/></header>
+        <div class="asideHelper">
+            <h1><b>Controls</b></h1>
+            <p>A,D Move left or right</p>
+            <p>W Jump (Note: The longer you hold down, the heigher the jump)</p>
+            <p>Shift: Speed up</p>
+        </div>
+        <div id="gameContainer">
+            <canvas id="stage" style="background-color:skyblue;"></canvas>
+        </div>
+        
         <div id="fps" style="margin-left:10px;"></div>
         <!--
         <script type="text/javascript" src="https://code.createjs.com/easeljs-0.8.1.min.js"></script>

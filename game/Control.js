@@ -1,7 +1,7 @@
 var Controller = function(player){
     var states = ["walking","jumping","still"];
     var currentState;
-    var maxHeight;
+    var jumpSuccessful;
     var velocity;
     
     this.init = function(){
@@ -17,17 +17,21 @@ var Controller = function(player){
     }
     
     this.startJump = function(e){
-        if(player.isTouchingDown()){
+        if(player.isTouchingDown() || !player.isAlive()){
+            console.log("Jump started");
+            jumpSuccessful = true;
             createjs.Sound.play("jump");
             player.setJumping(true);
             //console.log("Jump started!");
-            velocity = -23;
+            velocity = -23; 
         }
     }
     
     this.endJump = function(e){
-        //jumping = false;
-        console.log("Jump ended!");
+        if(jumpSuccessful && velocity < -6)
+            velocity = -6;
+            console.log("Jump ended!");
+            jumpSuccessful = false;
     }
     
     
@@ -42,7 +46,7 @@ var Controller = function(player){
     }
     
     this.update = function(upKey,rightKey,leftKey){
-        if(player.isAlive()){
+        if(player.isAlive() || player.isWaiting()){
             if(upKey){
                 if(!player.isJumping()){startJump = true;}
                 currentState = states[1]; 

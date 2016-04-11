@@ -39,9 +39,16 @@ var Enemy = function(stage,type,x,y,assetManager){
                 sprite.gotoAndPlay("yogiDeath");
             }
             sprite.addEventListener("animationend",onDeath);
-        }
+        };
+        sprite.isAlive = function(){
+            return alive;
+        };
         stage.addChild(sprite);
         
+    }
+    
+    this.killInstantly = function(){
+        onDeath();
     }
     
     this.update = function(){
@@ -109,13 +116,23 @@ var Enemy = function(stage,type,x,y,assetManager){
     function onDeath(e){
         createjs.Sound.play("death");
         sprite.stop();
-        e.remove();
+        if(e !== undefined)
+            e.remove();
         stage.removeChild(sprite);
+        if(type === "yogi")
+            killAllProjectiles();
     }
     
     function onShoot(e){
         e.remove();
         shootProjectile();
+    }
+    
+    function killAllProjectiles(){
+        for(var i = 0; i < projectiles.length; i ++){
+            projectiles[i].removeMe();
+        }
+        projectiles.splice(0,projectiles.length);
     }
     
     function isGrounded(){
@@ -158,7 +175,7 @@ var Projectile = function(assetManager,x,y,stage){
             if(live){
                 live = false;
                 sprite.gotoAndPlay("yogurtHit");
-                sprite.addEventListener("animationend",removeMe);
+                sprite.addEventListener("animationend",me.removeMe);
             }
         }
         stage.addChild(sprite);
@@ -168,7 +185,7 @@ var Projectile = function(assetManager,x,y,stage){
     
     
     
-    function removeMe(e){
+    this.removeMe = function(e){
         if(e !== undefined){
             e.remove();
         }
@@ -185,7 +202,7 @@ var Projectile = function(assetManager,x,y,stage){
         if(live){
             lifeDuration --;
             if(lifeDuration <= 0){
-                removeMe();
+                me.removeMe();
             }
             sprite.x -= speed;
             //checkCollision();
