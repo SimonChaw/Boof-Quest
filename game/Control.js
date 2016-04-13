@@ -17,7 +17,7 @@ var Controller = function(player){
     }
     
     this.startJump = function(e){
-        if(player.isTouchingDown() || !player.isAlive()){
+        if(player.isTouchingDown() || (!player.isAlive() && e === undefined)){
             console.log("Jump started");
             jumpSuccessful = true;
             createjs.Sound.play("jump");

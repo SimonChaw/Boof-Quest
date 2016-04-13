@@ -92,6 +92,9 @@
         //myInterval = setInterval(onTick,0);
         container.addEventListener("mapLoaded",onStartGame);
         console.log("mapTest/" + levels[level] + ".json");
+        stage.on("click",function(){
+           console.log(stage); 
+        });
     }
 
     function onStartGame(e) {
@@ -154,8 +157,8 @@
         stage.addChild(button);
         stage.update();
         // remove all listeners
-        //document.removeEventListener("keydown", onKeyDown);
-        //document.removeEventListener("keyup", onKeyUp);
+        document.removeEventListener("keydown", onKeyDown);
+        document.removeEventListener("keyup", onKeyUp);
     }
     
     
@@ -164,6 +167,7 @@
                 Enemies[i].killInstantly();
             }
         Enemies.splice(0,Enemies.length);
+        container.removeAllChildren();
     }
     
     function onResetGame(e) {

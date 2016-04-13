@@ -52,9 +52,6 @@ var Enemy = function(stage,type,x,y,assetManager){
     }
     
     this.update = function(){
-        if(!isGrounded()){
-            //sprite.y += gravity;   
-        }
         decide();
         if(type==="yogi"){
             for(var i = 0; i < projectiles.length; i ++){
@@ -133,19 +130,6 @@ var Enemy = function(stage,type,x,y,assetManager){
             projectiles[i].removeMe();
         }
         projectiles.splice(0,projectiles.length);
-    }
-    
-    function isGrounded(){
-        for(var i = 0;i<stage.children.length;i++){
-            if(stage.children[i].type === "ground"){
-                var intersection = ndgmr.checkRectCollision(sprite,stage.children[i]);
-                if(intersection !== null){
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-        }
     }
      
     function shootProjectile(){
