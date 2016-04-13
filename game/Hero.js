@@ -64,10 +64,6 @@ var Hero = function(stage,assetManager,hud,score){
         return score;
     }
     
-    this.setScore = function(newScore){
-        score = newScore;
-    }
-    
     this.levelCompleted = function(){
         return levelComplete;
     }
@@ -158,6 +154,7 @@ var Hero = function(stage,assetManager,hud,score){
     
     
     this.update = function(deltaTime){
+        console.log(sprite.y);
         if(alive){
             if(sprite.y > 2100){
                 waiting = false;
@@ -168,11 +165,11 @@ var Hero = function(stage,assetManager,hud,score){
                 sprite.visible = !sprite.visible;
                 invisibilityTimer --;
             }
+            updateHealth();
             time = deltaTime;
             stage.x = (sprite.x/1.43 * -1) + 150;
             stage.y = (sprite.y/1.5) * -1 + 200;
             checkIfGrounded();
-            updateHealth();
             hitbox.x = sprite.x + 100;
             hitbox.y = sprite.y + 140;
             bodyBox.x = sprite.x + 70;
@@ -199,10 +196,9 @@ var Hero = function(stage,assetManager,hud,score){
     
     this.kill = function(){
         if(alive){
-            touchingDown = false;
             hud.removeChild(healthHud);
             alive = false;
-            controller.startJump(null,true);
+            controller.startJump();
             sprite.gotoAndPlay("boofDeath"); sprite.addEventListener("animationend",onDeath);
         }
     }
