@@ -14,7 +14,7 @@
     var shiftKey = false;
     var mapLoaded;
     var score = 0;
-    var levels = ["final1","final2","final3"];
+    var levels = ["final2","final2","final3"];
     var level;
     //holder for enemies
     var Enemies = Array();
@@ -207,6 +207,8 @@
             stage.update();
             cleanUpStage();
             onResetGame();
+            Boof.setScore(0);
+            score = 0;
         });
         stage.addChild(button, winTitle,txtScore);
         stage.update();
@@ -220,7 +222,7 @@
             rightKey = true;
         }else if (e.keyCode == 87 && !upKey){
             upKey = true;
-            Boof.getController().startJump(e);
+            Boof.getController().startJump(e,false);
         }
         else if (e.keyCode == 40){
             downKey = true;
@@ -287,7 +289,6 @@
             }
             Boof.getController().update(upKey,rightKey,leftKey);
         }else if(!Boof.isAlive() && !Boof.isWaiting()){
-            console.log(Boof.isWaiting());
             onGameOver();
         }else{
             Boof.getController().update();
