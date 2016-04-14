@@ -144,6 +144,10 @@ var Hero = function(stage,assetManager,hud,score){
         speed = 10;
     }
     
+    this.setScore = function(newScore){
+        score = newScore;
+    }
+    
     sprite.takeDamage = function(colObj){
         if(invisibilityTimer <= 0){
             createjs.Sound.play("crunch");

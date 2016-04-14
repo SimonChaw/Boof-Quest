@@ -209,6 +209,8 @@
                  function(){
             stage.removeChild(button, winTitle,txtScore);
             stage.update();
+            Boof.setScore(0);
+            score = 0;
             cleanUpStage();
             onResetGame();
         });
