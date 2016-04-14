@@ -36,12 +36,16 @@ var Controller = function(player){
     
     
     this.updateAnimation = function(){
-        if(!player.isTouchingDown()){
-            playIfNotPlaying("boofAir");
-        }else if(currentState === states[0]){
-            playIfNotPlaying("boofWalk");
-        }else if(currentState === states[2]){
-            playIfNotPlaying("boofStand");
+        if(player.isAlive()){
+            if(!player.isTouchingDown()){
+                playIfNotPlaying("boofAir");
+            }else if(currentState === states[0]){
+                playIfNotPlaying("boofWalk");
+            }else if(currentState === states[2]){
+                playIfNotPlaying("boofStand");
+            }
+        }else{
+            playIfNotPlaying("boofDeath");
         }
     }
     
